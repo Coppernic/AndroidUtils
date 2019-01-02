@@ -1,5 +1,4 @@
-- **dev** : [![pipeline status]()]()
-- **master** : [![pipeline status]()]()
+- **master** : [![pipeline status](https://travis-ci.org/Coppernic/AndroidUtils.svg?branch=master)](https://github.com/Coppernic/AndroidUtils)
 
 # Android Utils
 
