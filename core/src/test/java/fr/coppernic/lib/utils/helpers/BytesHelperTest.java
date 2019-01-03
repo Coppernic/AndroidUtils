@@ -91,7 +91,7 @@ public class BytesHelperTest {
         }
 
         assertEquals("61626364",
-                     BytesHelper.byteArrayToString(array, array.length, ""));
+                     BytesHelper.byteArrayToString(array));
         assertEquals("61 62 63 64",
                      BytesHelper.byteArrayToString(array, array.length, " "));
         //assertEquals("616263", BytesHelper.byteArrayToString(array, 3));
@@ -100,7 +100,7 @@ public class BytesHelperTest {
         assertEquals("61azerty62azerty63azerty64",
                      BytesHelper.byteArrayToString(array, array.length, "azerty"));
         assertEquals("61626364",
-                     BytesHelper.byteArrayToString(array, array.length, ""));
+                     BytesHelper.byteArrayToString(array, array.length));
         assertEquals("61626364",
                      BytesHelper.byteArrayToString(array, array.length, null));
     }

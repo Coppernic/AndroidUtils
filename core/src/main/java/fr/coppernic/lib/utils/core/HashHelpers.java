@@ -1,9 +1,12 @@
 package fr.coppernic.lib.utils.core;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Provide hashing functions using the Modified Bernstein hash
  */
-public final class HashCodeHelpers {
+public final class HashHelpers {
 
     /**
      * Hash every element uniformly using the Modified Bernstein hash.
@@ -64,6 +67,7 @@ public final class HashCodeHelpers {
      * @param array a non-{@code null} array of objects
      * @return the numeric hash code
      */
+    @SafeVarargs
     public static <T> int hashCodeGeneric(T... array) {
         if (array == null) {
             return 0;
@@ -78,4 +82,18 @@ public final class HashCodeHelpers {
         return h;
     }
 
+
+    public static byte[] hashTemplate(final byte[] data, final String algorithm) {
+        if (data == null || data.length <= 0) {
+            return null;
+        }
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            md.update(data);
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return new byte[]{};
+        }
+    }
 }

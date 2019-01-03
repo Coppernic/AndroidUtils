@@ -66,7 +66,7 @@ object StorageHelper {
         }
         return ret
     }
-    
+
     /**
      * On Cone, there are two external storage. One in SD, another in internal storage.
      * We get the list of external storage and give the first one that begins by

@@ -326,6 +326,6 @@ public final class Range<T extends Comparable<? super T>> {
      */
     @Override
     public int hashCode() {
-        return HashCodeHelpers.hashCodeGeneric(mLower, mUpper);
+        return HashHelpers.hashCodeGeneric(mLower, mUpper);
     }
 }

@@ -1,5 +1,6 @@
 package fr.coppernic.lib.utils.io;
 
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 
 import java.io.ByteArrayOutputStream;
@@ -13,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import fr.coppernic.lib.utils.io.Closeables;
-
 /**
  * Class containing method performing some basic tasks with bytes
  * <p>It is advised to use a special lib to handle bytes such as okio from square {@see https://github.com/square/okio}
@@ -23,8 +22,7 @@ import fr.coppernic.lib.utils.io.Closeables;
 @SuppressWarnings("WeakerAccess")
 public class BytesHelper {
 
-    final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    final static char space = ' ';
+    final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private static final int SIZE_LONG = 8;
     private static final int SIZE_INT = 4;
     private static final int SIZE_SHORT = 2;
@@ -230,24 +228,19 @@ public class BytesHelper {
     /**
      * Convert a byte array in a human readable version.
      * <p>
-     * For instance, 1F value in byte gives "0x1F " in final string. This
-     * function add a space between values.
+     * For instance, 1F value in byte gives "0x1F " in final string.
      *
      * @param array Byte array
      * @param len   Length of byte array
      * @return The newly created String
      */
-    public static String byteArrayToString(byte[] array, int len) {
-        if (array == null) {
-            return "";
-        }
-        char[] hexChars = new char[len * 3];
+    public static String byteArrayToString(@NonNull byte[] array, int len) {
+        char[] hexChars = new char[len * 2];
         for (int i = 0; i < len; i++) {
             int value = array[i] & 0xFF;
-            int index = i * 3;
-            hexChars[index++] = hexArray[value >>> 4];
-            hexChars[index++] = hexArray[value & 0x0F];
-            hexChars[index] = space;
+            int index = i * 2;
+            hexChars[index++] = HEX_ARRAY[value >>> 4];
+            hexChars[index] = HEX_ARRAY[value & 0x0F];
         }
         return new String(hexChars);
     }

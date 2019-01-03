@@ -3,8 +3,12 @@ package fr.coppernic.lib.utils.io;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +22,8 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import fr.coppernic.lib.utils.result.RESULT;
 import timber.log.Timber;
@@ -633,6 +639,36 @@ public class FileHelper {
         }
 
         return stringBuilder.toString();
+    }
+
+    @Nullable
+    public static String createZip(@NonNull List<String> files, File file) {
+        try {
+            final int BUFFER = 2048;
+            BufferedInputStream origin;
+            FileOutputStream dest = new FileOutputStream(file);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+
+            byte data[] = new byte[BUFFER];
+            for (int i = 0; i < files.size(); i++) {
+                FileInputStream fi = new FileInputStream(files.get(i));
+                origin = new BufferedInputStream(fi, BUFFER);
+
+                ZipEntry entry = new ZipEntry(files.get(i).substring(files.get(i).lastIndexOf("/") + 1));
+                out.putNextEntry(entry);
+                int count;
+
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+
+            out.close();
+            return file.toString();
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
 }

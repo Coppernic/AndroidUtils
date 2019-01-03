@@ -18,7 +18,7 @@ class BatteryHelper @Inject constructor(private val context: Context) {
 
     var temperature = -1
     var voltage = -1
-    
+
     var batteryListener: BatteryListener = object : BatteryListener {
         override fun onBatteryPlugged() {
         }
@@ -30,7 +30,7 @@ class BatteryHelper @Inject constructor(private val context: Context) {
     private val powerReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action?:"") {
+            when (intent.action ?: "") {
                 Intent.ACTION_BATTERY_CHANGED -> updateBatteryStatus(intent)
                 Intent.ACTION_POWER_CONNECTED -> batteryListener.onBatteryPlugged()
                 Intent.ACTION_BATTERY_LOW -> batteryListener.onBatteryLow()

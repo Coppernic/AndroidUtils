@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
-import fr.coppernic.lib.utils.io.FileHelper;
 import fr.coppernic.lib.utils.io.Closeables;
+import fr.coppernic.lib.utils.io.FileHelper;
 import timber.log.Timber;
 
 /**
@@ -166,7 +166,7 @@ public class BitmapHelper {
      * @param drawable Drawable to transform in bitmap
      * @return the newly bitmap created
      */
-    public static Bitmap drawableToBitmap(Drawable drawable) {
+    public static Bitmap toBitmap(Drawable drawable) {
         Bitmap bitmap;
 
         if (drawable instanceof BitmapDrawable) {

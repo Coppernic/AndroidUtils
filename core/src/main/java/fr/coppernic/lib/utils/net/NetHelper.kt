@@ -125,7 +125,7 @@ object NetHelper {
                 val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
                 for (intf in interfaces) {
                     if (DEBUG) {
-                        Timber.d( intf.toString())
+                        Timber.d(intf.toString())
                     }
                     if (!intf.name.equals(interfaceName, ignoreCase = true)) {
                         continue
@@ -248,7 +248,7 @@ object NetHelper {
                     val index = c.getColumnIndex("_id")
                     id = c.getShort(index).toInt()
                     if (DEBUG) {
-                        Timber.d( "Newly added APN : $id")
+                        Timber.d("Newly added APN : $id")
                     }
                 }
             }

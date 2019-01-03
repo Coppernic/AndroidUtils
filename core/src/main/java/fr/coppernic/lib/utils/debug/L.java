@@ -91,13 +91,13 @@ public class L {
     /**
      * Print a byte array in Android logcat
      *
-     * @param tag TAG
+     * @param tag   TAG
      * @param array Array to print
-     * @param len len of array
+     * @param len   len of array
      */
     public static void printLine(String tag, byte[] array, int len) {
         Timber.tag(tag);
-        Timber.v("l: %d, d: %s",len, byteArrayToString(array, len));
+        Timber.v("l: %d, d: %s", len, byteArrayToString(array, len));
     }
 
 }

@@ -6,13 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.pm.Signature
 import android.os.Build
 import android.os.Looper
 import android.os.PowerManager
 import android.support.annotation.RequiresApi
 import fr.coppernic.lib.utils.BuildConfig
+import fr.coppernic.lib.utils.core.HashHelpers
+import fr.coppernic.lib.utils.io.BytesHelper
 import fr.coppernic.lib.utils.result.RESULT
 import timber.log.Timber
+
 
 const val UID_SYSTEM = 1000
 
@@ -91,6 +95,94 @@ object AppHelper {
             }
         }
         return ""
+    }
+
+    /**
+     * Return the application's version name.
+     *
+     * @param packageName The name of the package.
+     * @return the application's version name
+     */
+    fun getAppVersionName(context: Context, packageName: String = context.packageName): String {
+        if (packageName.trim().isEmpty()) return ""
+        return try {
+            context.packageManager.getPackageInfo(packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            ""
+        }
+
+    }
+
+    /**
+     * Return the application's version code.
+     *
+     * @param packageName The name of the package.
+     * @return the application's version code
+     */
+    fun getAppVersionCode(context: Context, packageName: String = context.packageName): Int {
+        if (packageName.trim().isEmpty()) return -1
+        return try {
+            context.packageManager.getPackageInfo(packageName, 0).versionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            -1
+        }
+
+    }
+
+    /**
+     * Return the application's signature.
+     *
+     * @param packageName The name of the package.
+     * @return the application's signature
+     */
+    @SuppressLint("PackageManagerGetSignatures")
+    fun getAppSignature(context: Context, packageName: String = context.packageName): List<Signature> {
+        if (packageName.trim().isEmpty()) return emptyList()
+        return try {
+            val pm = context.packageManager
+            pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures.toList()
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    fun getAppSignatureHash(context: Context, packageName: String, algorithm: String): String {
+        if (packageName.trim().isEmpty()) return ""
+        val signature = getAppSignature(context, packageName)
+        return if (signature.isEmpty()) "" else BytesHelper.byteArrayToString(HashHelpers.hashTemplate(signature[0].toByteArray(), algorithm))
+    }
+
+    /**
+     * Return the application's signature for SHA1 value.
+     *
+     * @param packageName The name of the package.
+     * @return the application's signature for SHA1 value
+     */
+    fun getAppSignatureSHA1(context: Context, packageName: String = context.packageName): String {
+        return getAppSignatureHash(context, packageName, "SHA1")
+    }
+
+    /**
+     * Return the application's signature for SHA256 value.
+     *
+     * @param packageName The name of the package.
+     * @return the application's signature for SHA256 value
+     */
+    fun getAppSignatureSHA256(context: Context, packageName: String = context.packageName): String {
+        return getAppSignatureHash(context, packageName, "SHA256")
+    }
+
+    /**
+     * Return the application's signature for MD5 value.
+     *
+     * @param packageName The name of the package.
+     * @return the application's signature for MD5 value
+     */
+    fun getAppSignatureMD5(context: Context, packageName: String = context.packageName): String {
+        return getAppSignatureHash(context, packageName, "MD5")
     }
 
     /**

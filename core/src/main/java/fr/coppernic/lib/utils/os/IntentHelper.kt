@@ -2,9 +2,14 @@ package fr.coppernic.lib.utils.os
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
 import fr.coppernic.lib.utils.graphics.BitmapHelper
 import timber.log.Timber
+import java.io.File
+
 
 const val SETTINGS_QUICK_LAUNCH_TITLE = "com.android.settings.quicklaunch.TITLE"
 const val SETTINGS_QUICK_LAUNCH_PACKAGENAME = "com.android.settings.quicklaunch.PACKAGENAME"
@@ -110,7 +115,7 @@ object IntentHelper {
                 ret = Intent()
                 ret.putExtra(Intent.EXTRA_SHORTCUT_INTENT, i)
                 ret.putExtra(Intent.EXTRA_SHORTCUT_NAME, ai.loadLabel(pm))
-                ret.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapHelper.drawableToBitmap(ai.loadIcon(pm)))
+                ret.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapHelper.toBitmap(ai.loadIcon(pm)))
                 ret.putExtra("duplicate", false)
             } else {
                 Timber.e("Package not found : $packageName")
@@ -145,8 +150,7 @@ object IntentHelper {
      * @return Intent to send
      */
     fun getUninstallIntent(packName: String): Intent {
-        return Intent(Intent.ACTION_UNINSTALL_PACKAGE,
-                Uri.parse("package:$packName"))
+        return Intent(Intent.ACTION_UNINSTALL_PACKAGE, Uri.parse("package:$packName"))
     }
 
     /**
@@ -171,4 +175,98 @@ object IntentHelper {
         return (intent.action == null || intent.action == Intent.ACTION_MAIN && intent.categories.contains(Intent.CATEGORY_LAUNCHER))
     }
 
+    /**
+     * Return whether the intent is available.
+     *
+     * @param intent The intent.
+     * @return `true`: yes<br></br>`false`: no
+     */
+    fun isIntentAvailable(context: Context, intent: Intent): Boolean {
+        return context.packageManager
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+                .size > 0
+    }
+
+    /**
+     * Return the intent of install app.
+     *
+     * Target APIs greater than 25 must hold
+     * `<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />`
+     *
+     * @param filePath  The path of file.
+     * @return the intent of install app
+     */
+    fun getInstallAppIntent(context: Context, filePath: String): Intent {
+        return getInstallAppIntent(context, File(filePath))
+    }
+
+    /**
+     * Return the intent of install app.
+     *
+     * Target APIs greater than 25 must hold
+     * `<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />`
+     *
+     * @param file      The file.
+     * @param isNewTask True to add flag of new task, false otherwise.
+     * @return the intent of install app
+     */
+    fun getInstallAppIntent(context: Context, file: File, authority: String = context.packageName): Intent {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val data = file2Uri(context, file, authority)
+        val type = "application/vnd.android.package-archive"
+        intent.setDataAndType(data, type)
+        return intent
+    }
+
+    /**
+     * Return the intent of launch app.
+     *
+     * @param packageName The name of the package.
+     * @param isNewTask   True to add flag of new task, false otherwise.
+     * @return the intent of launch app
+     */
+    fun getLaunchAppIntent(context: Context, packageName: String): Intent? {
+        return context.packageManager.getLaunchIntentForPackage(packageName)
+    }
+
+    /**
+     * Return the intent of launch app details settings.
+     *
+     * @param packageName The name of the package.
+     * @param isNewTask   True to add flag of new task, false otherwise.
+     * @return the intent of launch app details settings
+     */
+    fun getLaunchAppDetailsSettingsIntent(packageName: String): Intent {
+        val intent = Intent("android.settings.APPLICATION_DETAILS_SETTINGS")
+        intent.data = Uri.parse("package:$packageName")
+        return intent
+    }
+
+    /**
+     * Return the intent of share text.
+     *
+     * @param content   The content.
+     * @param isNewTask True to add flag of new task, false otherwise.
+     * @return the intent of share text
+     */
+
+    fun getShareTextIntent(content: String): Intent {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, content)
+        return intent
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // other utils methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    private fun file2Uri(context: Context, file: File, authority: String = context.packageName): Uri {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(context, authority, file)
+        } else {
+            Uri.fromFile(file)
+        }
+    }
 }

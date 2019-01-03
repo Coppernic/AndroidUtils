@@ -8,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 
-class WatchDogTest: RobolectricTest() {
+class WatchDogTest : RobolectricTest() {
     private lateinit var w: WatchDog
     private var timeout = AtomicInteger(0)
 
