@@ -14,7 +14,7 @@ import fr.coppernic.lib.utils.io.Closeables;
 /**
  * Utility class to save Bitmap on bmp format
  */
-public class BmpHelper {
+public final class BmpHelper {
 
     private static final int BMP_WIDTH_OF_TIMES = 4;
     private static final int BYTE_PER_PIXEL = 3;

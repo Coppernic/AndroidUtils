@@ -8,7 +8,10 @@ import java.util.Locale;
 import java.util.Random;
 
 @SuppressWarnings({"StatementWithEmptyBody", "unused"})
-public class StringHelper {
+public final class StringHelper {
+
+    private StringHelper() {
+    }
 
     /**
      * Format a string in MAC format.

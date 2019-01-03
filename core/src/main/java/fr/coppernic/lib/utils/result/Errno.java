@@ -139,4 +139,7 @@ public final class Errno {
 
     public static final int ENOATTR = ENODATA;   /* No such attribute */
     public static final int ENOTSUPP = 524;      /* Operation is not supported*/
+
+    private Errno() {
+    }
 }

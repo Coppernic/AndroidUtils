@@ -32,39 +32,42 @@ public final class PermissionConstants {
     public static final String SMS = Manifest.permission_group.SMS;
     public static final String STORAGE = Manifest.permission_group.STORAGE;
 
-    private static final String[] GROUP_CALENDAR = {
+    public static final String[] GROUP_CALENDAR = {
         permission.READ_CALENDAR, permission.WRITE_CALENDAR
     };
-    private static final String[] GROUP_CAMERA = {
+    public static final String[] GROUP_CAMERA = {
         permission.CAMERA
     };
-    private static final String[] GROUP_CONTACTS = {
+    public static final String[] GROUP_CONTACTS = {
         permission.READ_CONTACTS, permission.WRITE_CONTACTS, permission.GET_ACCOUNTS
     };
-    private static final String[] GROUP_LOCATION = {
+    public static final String[] GROUP_LOCATION = {
         permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION
     };
-    private static final String[] GROUP_MICROPHONE = {
+    public static final String[] GROUP_MICROPHONE = {
         permission.RECORD_AUDIO
     };
-    private static final String[] GROUP_PHONE = {
+    public static final String[] GROUP_PHONE = {
         permission.READ_PHONE_STATE, permission.READ_PHONE_NUMBERS, permission.CALL_PHONE,
         permission.READ_CALL_LOG, permission.WRITE_CALL_LOG, permission.ADD_VOICEMAIL,
         permission.USE_SIP, permission.PROCESS_OUTGOING_CALLS, permission.ANSWER_PHONE_CALLS
     };
-    private static final String[] GROUP_PHONE_BELOW_O = Arrays.copyOf(
+    public static final String[] GROUP_PHONE_BELOW_O = Arrays.copyOf(
         GROUP_PHONE, GROUP_PHONE.length - 1
     );
-    private static final String[] GROUP_SENSORS = {
+    public static final String[] GROUP_SENSORS = {
         permission.BODY_SENSORS
     };
-    private static final String[] GROUP_SMS = {
+    public static final String[] GROUP_SMS = {
         permission.SEND_SMS, permission.RECEIVE_SMS, permission.READ_SMS,
         permission.RECEIVE_WAP_PUSH, permission.RECEIVE_MMS,
         };
-    private static final String[] GROUP_STORAGE = {
+    public static final String[] GROUP_STORAGE = {
         permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private PermissionConstants() {
+    }
 
     public static String[] getPermissions(@Permission final String permission) {
         switch (permission) {
@@ -94,7 +97,7 @@ public final class PermissionConstants {
         return new String[]{permission};
     }
 
-    @StringDef({CALENDAR, CAMERA, CONTACTS, LOCATION, MICROPHONE, PHONE, SENSORS, SMS, STORAGE,})
+    @StringDef({CALENDAR, CAMERA, CONTACTS, LOCATION, MICROPHONE, PHONE, SENSORS, SMS, STORAGE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Permission {
     }

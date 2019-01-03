@@ -8,6 +8,9 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class HashHelpers {
 
+    private HashHelpers() {
+    }
+
     /**
      * Hash every element uniformly using the Modified Bernstein hash.
      *
@@ -81,7 +84,6 @@ public final class HashHelpers {
 
         return h;
     }
-
 
     public static byte[] hashTemplate(final byte[] data, final String algorithm) {
         if (data == null || data.length <= 0) {

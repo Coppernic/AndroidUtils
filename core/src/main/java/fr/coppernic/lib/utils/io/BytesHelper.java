@@ -1,7 +1,6 @@
 package fr.coppernic.lib.utils.io;
 
 import android.support.annotation.NonNull;
-import android.view.KeyEvent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,9 +9,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Class containing method performing some basic tasks with bytes
@@ -20,12 +17,15 @@ import java.util.List;
  * instread of this one.
  */
 @SuppressWarnings("WeakerAccess")
-public class BytesHelper {
+public final class BytesHelper {
 
-    final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private static final int SIZE_LONG = 8;
     private static final int SIZE_INT = 4;
     private static final int SIZE_SHORT = 2;
+
+    private BytesHelper() {
+    }
 
     /**
      * Fill a bytes array with zeros
@@ -34,14 +34,16 @@ public class BytesHelper {
      */
     public static void clearMemoryWithZero(byte[] array) {
 
-        for (int i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++) {
             array[i] = 0;
+        }
     }
 
     public static void clearMemoryWithZero(int[] array) {
 
-        for (int i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++) {
             array[i] = 0;
+        }
     }
 
     /**
@@ -90,8 +92,6 @@ public class BytesHelper {
 
         return -1;
     }
-
-    // TODO unit test
 
     /**
      * Return the first index of a char in a char array
@@ -453,276 +453,6 @@ public class BytesHelper {
             Closeables.closeQuietly(out);
         }
         return data;
-    }
-
-    /**
-     * Converts byte array to keycode array
-     *
-     * @param value
-     * @return
-     */
-    public static int[] byteArrayToKeyCodeArray(byte[] value) {
-        List<Integer> listResult = new ArrayList<>();
-
-        for (byte b : value) {
-            int[] r = byteToKeyCode(b);
-            if (r != null) {
-                for (int aR : r) {
-                    listResult.add(aR);
-                }
-            }
-        }
-        int[] results = new int[listResult.size()];
-        for (int i = 0; i < listResult.size(); i++) {
-            if (listResult.get(i) != -1) {
-                results[i] = listResult.get(i);
-            }
-        }
-        return results;
-    }
-
-    /**
-     * Converts byte to keycode
-     *
-     * @param value
-     * @return Keycode Value
-     */
-    public static int[] byteToKeyCode(byte value) {
-        int[] iArray = new int[2];
-        iArray[0] = KeyEvent.KEYCODE_SHIFT_LEFT;
-
-        switch (value) {
-            case '0':
-                return new int[]{KeyEvent.KEYCODE_0};
-            case '1':
-                return new int[]{KeyEvent.KEYCODE_1};
-            case '2':
-                return new int[]{KeyEvent.KEYCODE_2};
-            case '3':
-                return new int[]{KeyEvent.KEYCODE_3};
-            case '4':
-                return new int[]{KeyEvent.KEYCODE_4};
-            case '5':
-                return new int[]{KeyEvent.KEYCODE_5};
-            case '6':
-                return new int[]{KeyEvent.KEYCODE_6};
-            case '7':
-                return new int[]{KeyEvent.KEYCODE_7};
-            case '8':
-                return new int[]{KeyEvent.KEYCODE_8};
-            case '9':
-                return new int[]{KeyEvent.KEYCODE_9};
-            case 'a':
-                return new int[]{KeyEvent.KEYCODE_A};
-            case 'A':
-                iArray[1] = KeyEvent.KEYCODE_A;
-                return iArray;
-            case 'b':
-                return new int[]{KeyEvent.KEYCODE_B};
-            case 'B':
-                iArray[1] = KeyEvent.KEYCODE_B;
-                return iArray;
-            case 'c':
-                return new int[]{KeyEvent.KEYCODE_C};
-            case 'C':
-                iArray[1] = KeyEvent.KEYCODE_C;
-                return iArray;
-            case 'd':
-                return new int[]{KeyEvent.KEYCODE_D};
-            case 'D':
-                iArray[1] = KeyEvent.KEYCODE_D;
-                return iArray;
-            case 'e':
-                return new int[]{KeyEvent.KEYCODE_E};
-            case 'E':
-                iArray[1] = KeyEvent.KEYCODE_E;
-                return iArray;
-            case 'f':
-                return new int[]{KeyEvent.KEYCODE_F};
-            case 'F':
-                iArray[1] = KeyEvent.KEYCODE_F;
-                return iArray;
-            case 'g':
-                return new int[]{KeyEvent.KEYCODE_G};
-            case 'G':
-                iArray[1] = KeyEvent.KEYCODE_G;
-                return iArray;
-            case 'h':
-                return new int[]{KeyEvent.KEYCODE_H};
-            case 'H':
-                iArray[1] = KeyEvent.KEYCODE_H;
-                return iArray;
-            case 'i':
-                return new int[]{KeyEvent.KEYCODE_I};
-            case 'I':
-                iArray[1] = KeyEvent.KEYCODE_I;
-                return iArray;
-            case 'j':
-                return new int[]{KeyEvent.KEYCODE_J};
-            case 'J':
-                iArray[1] = KeyEvent.KEYCODE_J;
-                return iArray;
-            case 'k':
-                return new int[]{KeyEvent.KEYCODE_K};
-            case 'K':
-                iArray[1] = KeyEvent.KEYCODE_K;
-                return iArray;
-            case 'l':
-                return new int[]{KeyEvent.KEYCODE_L};
-            case 'L':
-                iArray[1] = KeyEvent.KEYCODE_L;
-                return iArray;
-            case 'm':
-                return new int[]{KeyEvent.KEYCODE_M};
-            case 'M':
-                iArray[1] = KeyEvent.KEYCODE_M;
-                return iArray;
-            case 'n':
-                return new int[]{KeyEvent.KEYCODE_N};
-            case 'N':
-                iArray[1] = KeyEvent.KEYCODE_N;
-                return iArray;
-            case 'o':
-                return new int[]{KeyEvent.KEYCODE_O};
-            case 'O':
-                iArray[1] = KeyEvent.KEYCODE_O;
-                return iArray;
-            case 'p':
-                return new int[]{KeyEvent.KEYCODE_P};
-            case 'P':
-                iArray[1] = KeyEvent.KEYCODE_P;
-                return iArray;
-            case 'q':
-                return new int[]{KeyEvent.KEYCODE_Q};
-            case 'Q':
-                iArray[1] = KeyEvent.KEYCODE_Q;
-                return iArray;
-            case 'r':
-                return new int[]{KeyEvent.KEYCODE_R};
-            case 'R':
-                iArray[1] = KeyEvent.KEYCODE_R;
-                return iArray;
-            case 's':
-                return new int[]{KeyEvent.KEYCODE_S};
-            case 'S':
-                iArray[1] = KeyEvent.KEYCODE_S;
-                return iArray;
-            case 't':
-                return new int[]{KeyEvent.KEYCODE_T};
-            case 'T':
-                iArray[1] = KeyEvent.KEYCODE_T;
-                return iArray;
-            case 'u':
-                return new int[]{KeyEvent.KEYCODE_U};
-            case 'U':
-                iArray[1] = KeyEvent.KEYCODE_U;
-                return iArray;
-            case 'v':
-                return new int[]{KeyEvent.KEYCODE_V};
-            case 'V':
-                iArray[1] = KeyEvent.KEYCODE_V;
-                return iArray;
-            case 'w':
-                return new int[]{KeyEvent.KEYCODE_W};
-            case 'W':
-                iArray[1] = KeyEvent.KEYCODE_W;
-                return iArray;
-            case 'x':
-                return new int[]{KeyEvent.KEYCODE_X};
-            case 'X':
-                iArray[1] = KeyEvent.KEYCODE_X;
-                return iArray;
-            case 'y':
-                return new int[]{KeyEvent.KEYCODE_Y};
-            case 'Y':
-                iArray[1] = KeyEvent.KEYCODE_Y;
-                return iArray;
-            case 'z':
-                return new int[]{KeyEvent.KEYCODE_Z};
-            case 'Z':
-                iArray[1] = KeyEvent.KEYCODE_Z;
-                return iArray;
-            case ' ':
-                return new int[]{KeyEvent.KEYCODE_SPACE};
-            case ';':
-                return new int[]{KeyEvent.KEYCODE_SEMICOLON};
-            case '.':
-                return new int[]{KeyEvent.KEYCODE_PERIOD};
-            case ',':
-                return new int[]{KeyEvent.KEYCODE_COMMA};
-            case '/':
-                return new int[]{KeyEvent.KEYCODE_SLASH};
-            case '\\':
-                return new int[]{KeyEvent.KEYCODE_BACKSLASH};
-            case '*':
-                return new int[]{KeyEvent.KEYCODE_STAR};
-            case ']':
-                return new int[]{KeyEvent.KEYCODE_RIGHT_BRACKET};
-            case '[':
-                return new int[]{KeyEvent.KEYCODE_LEFT_BRACKET};
-            case '(':
-                return new int[]{KeyEvent.KEYCODE_NUMPAD_LEFT_PAREN};
-            case ')':
-                return new int[]{KeyEvent.KEYCODE_NUMPAD_RIGHT_PAREN};
-            case '#':
-                return new int[]{KeyEvent.KEYCODE_POUND};
-            case '+':
-                return new int[]{KeyEvent.KEYCODE_PLUS};
-            case '-':
-                return new int[]{KeyEvent.KEYCODE_MINUS};
-            case '=':
-                return new int[]{KeyEvent.KEYCODE_EQUALS};
-            case '@':
-                return new int[]{KeyEvent.KEYCODE_AT};
-            case '\'':
-                return new int[]{KeyEvent.KEYCODE_APOSTROPHE};
-            case '\r':
-                return new int[]{KeyEvent.KEYCODE_ENTER};
-            case '~':
-                iArray[1] = KeyEvent.KEYCODE_APOSTROPHE;
-                return iArray; // ~ => shift + '
-            case '!':
-                iArray[1] = KeyEvent.KEYCODE_1;
-                return iArray; // ! => shift + 1
-            case '$':
-                iArray[1] = KeyEvent.KEYCODE_4;
-                return iArray; // $ => shift + 4
-            case '%':
-                iArray[1] = KeyEvent.KEYCODE_5;
-                return iArray; // % => shift + 5
-            case '^':
-                iArray[1] = KeyEvent.KEYCODE_6;
-                return iArray; // ^ => shift + 6
-            case '&':
-                iArray[1] = KeyEvent.KEYCODE_7;
-                return iArray; // & => shift + 7
-            case '_':
-                iArray[1] = KeyEvent.KEYCODE_MINUS;
-                return iArray; // _ => shift + -
-            case '{':
-                iArray[1] = KeyEvent.KEYCODE_LEFT_BRACKET;
-                return iArray; // { => shift + [
-            case '}':
-                iArray[1] = KeyEvent.KEYCODE_RIGHT_BRACKET;
-                return iArray; // } => shift + ]
-            case ':':
-                iArray[1] = KeyEvent.KEYCODE_SEMICOLON;
-                return iArray; // : => shift + .
-            case '"':
-                iArray[1] = KeyEvent.KEYCODE_APOSTROPHE;
-                return iArray; // " => shift + '
-            case '<':
-                iArray[1] = KeyEvent.KEYCODE_PERIOD;
-                return iArray; // < => shift + .
-            case '>':
-                iArray[1] = KeyEvent.KEYCODE_COMMA;
-                return iArray; // > => shift + ,
-            case '?':
-                iArray[1] = KeyEvent.KEYCODE_SLASH;
-                return iArray; // > => shift + /
-            default:
-                return new int[]{};
-        }
     }
 
     /**

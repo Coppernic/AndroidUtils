@@ -11,7 +11,10 @@ import java.util.Collection;
  * Simple static methods to be called at the start of your own methods to verify
  * correct arguments and state.
  */
-public class Preconditions {
+public final class Preconditions {
+
+    private Preconditions() {
+    }
 
     public static void checkArgument(boolean expression) {
         if (!expression) {
@@ -441,4 +444,5 @@ public class Preconditions {
 
         return value;
     }
+
 }

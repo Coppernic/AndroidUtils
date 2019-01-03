@@ -12,8 +12,11 @@ import static fr.coppernic.lib.utils.io.BytesHelper.byteArrayToString;
  * @author Bastien Paul
  */
 @SuppressWarnings("WeakerAccess")
-public class L {
+public final class L {
     private static int sDepth = 2;
+
+    private L() {
+    }
 
     /**
      * Log the method name from which m() is called.
@@ -99,5 +102,4 @@ public class L {
         Timber.tag(tag);
         Timber.v("l: %d, d: %s", len, byteArrayToString(array, len));
     }
-
 }

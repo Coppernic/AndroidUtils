@@ -20,6 +20,9 @@ public final class MemoryConstants {
     public static final int MB = 1048576;
     public static final int GB = 1073741824;
 
+    private MemoryConstants() {
+    }
+
     @IntDef({BYTE, KB, MB, GB})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Unit {

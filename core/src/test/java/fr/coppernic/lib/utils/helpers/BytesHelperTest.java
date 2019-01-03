@@ -5,13 +5,16 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
 
 import fr.coppernic.lib.utils.io.BytesHelper;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -110,11 +113,11 @@ public class BytesHelperTest {
         byte[] a1 = null;
         byte[] a2 = null;
 
-        assertEquals(true, BytesHelper.arrayCmp(a1, a2));
+        assertTrue(BytesHelper.arrayCmp(a1, a2));
 
         a1 = new byte[4];
 
-        assertEquals(false, BytesHelper.arrayCmp(a1, a2));
+        assertFalse(BytesHelper.arrayCmp(a1, a2));
 
         a2 = new byte[4];
 
@@ -122,11 +125,11 @@ public class BytesHelperTest {
             a1[i] = a2[i] = (byte) i;
         }
 
-        assertEquals(true, BytesHelper.arrayCmp(a1, a2));
+        assertTrue(BytesHelper.arrayCmp(a1, a2));
 
         a1[3] = 42;
 
-        assertEquals(false, BytesHelper.arrayCmp(a1, a2));
+        assertFalse(BytesHelper.arrayCmp(a1, a2));
 
         a2 = new byte[8];
 
@@ -135,12 +138,11 @@ public class BytesHelperTest {
         }
         a1[3] = 3;
 
-        assertEquals(false, BytesHelper.arrayCmp(a1, a2));
+        assertFalse(BytesHelper.arrayCmp(a1, a2));
 
         a2[7] = 42;
 
-        assertEquals(false, BytesHelper.arrayCmp(a1, a2));
-
+        assertFalse(BytesHelper.arrayCmp(a1, a2));
     }
 
     @Test
@@ -203,7 +205,7 @@ public class BytesHelperTest {
             e.printStackTrace();
         }
 
-        assertEquals(true, BytesHelper.arrayCmp(buf, out.toByteArray()));
+        assertTrue(BytesHelper.arrayCmp(buf, out.toByteArray()));
     }
 
     @Test
@@ -242,7 +244,7 @@ public class BytesHelperTest {
         } catch (NumberFormatException e) {
             b = false;
         }
-        assertEquals(false, b);
+        assertFalse(b);
     }
 
     @Test
@@ -264,7 +266,7 @@ public class BytesHelperTest {
 
     @Test
     public void byteArrayToString() {
-        byte[] array = "0123456789".getBytes();
+        byte[] array = "0123456789".getBytes(Charset.forName("UTF-8"));
         assertThat(BytesHelper.byteArrayToString(array, array.length, ":"),
                    is("30:31:32:33:34:35:36:37:38:39"));
     }

@@ -8,7 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import fr.coppernic.lib.utils.io.BytesHelper;
 
-public class Aes {
+public final class Aes {
     public static final String TAG = "AES Coppernic";
 
     static final byte[] IV =
@@ -16,6 +16,9 @@ public class Aes {
     static final byte[] RB =
         new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                    (byte) 0x87};
+
+    private Aes() {
+    }
 
     public static byte[] encrypt(byte[] plainText, byte[] encryptionKey) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
@@ -33,11 +36,11 @@ public class Aes {
 
     public static byte[] getCmac(byte[] key, byte[] message) {
         int constBsize = 16;
-        boolean flag = true;
-        byte[] mLast = new byte[constBsize];
+        boolean flag;
+        byte[] mLast;
         byte r = (byte) (message.length % constBsize);
         // Step 1.
-        byte[][] K = generateSubkey(key);
+        byte[][] k = generateSubkey(key);
 
         // Step 2.
         float val = message.length / (float) constBsize;
@@ -58,39 +61,37 @@ public class Aes {
 
             System.arraycopy(message, constBsize * (n - 1), mN, 0, constBsize);
 
-            mLast = xor(mN, K[0]);
+            mLast = xor(mN, k[0]);
         } else {
             byte[] mN = new byte[constBsize];
             System.arraycopy(message, (n - 1) * constBsize, mN, 0, r);
             mN[r] = (byte) 0x80;
-            mLast = xor(mN, K[1]);
+            mLast = xor(mN, k[1]);
         }
 
         // Step 5.
-        byte[] X = new byte[constBsize];
-        System.arraycopy(IV, 0, X, 0, constBsize);
-        byte[] Y;
+        byte[] x = new byte[constBsize];
+        System.arraycopy(IV, 0, x, 0, constBsize);
+        byte[] y;
         // Step6.
         for (int i = 0; i < n - 1; i++) {
 
             byte[] mI = new byte[constBsize];
             System.arraycopy(message, 16 * i, mI, 0, constBsize);
 
-            Y = xor(X, mI);
+            y = xor(x, mI);
             try {
-                X = encrypt(Y, key);
+                x = encrypt(y, key);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
 
-        Y = xor(mLast, X);
+        y = xor(mLast, x);
 
         try {
-            return encrypt(Y, key);
+            return encrypt(y, key);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -106,9 +107,10 @@ public class Aes {
      */
     public static byte[] getMact(byte[] key, byte[] message) {
         byte[] cmac = getCmac(key, message);
-        byte[] mact = mact = new byte[8];
+        byte[] mact = new byte[8];
         for (int i = 0; i < 8; i++) {
-            mact[i] = cmac[2 * i + 1];
+            int index = 2 * i + 1;
+            mact[i] = cmac[index];
         }
         return mact;
     }
@@ -144,32 +146,31 @@ public class Aes {
     public static byte[][] generateSubkey(byte[] key) {
 
         // Step 1.
-        byte[] L = new byte[16];
+        byte[] l = new byte[16];
         try {
-            L = encrypt(IV, key);
+            l = encrypt(IV, key);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        byte[][] K = new byte[2][16];
-        K[0] = oneBitToLeft(L);
+        byte[][] k = new byte[2][16];
+        k[0] = oneBitToLeft(l);
         // Step 2.
-        if ((L[0] & 0x80) == 0x80) {
-            K[0] = xor(K[0], RB);
+        if ((l[0] & 0x80) == 0x80) {
+            k[0] = xor(k[0], RB);
         }
 
-        K[1] = oneBitToLeft(K[0]);
+        k[1] = oneBitToLeft(k[0]);
         // Step 3.
-        if ((K[1][0] & 0x80) == 0x80) {
-            K[1] = xor(K[1], RB);
+        if ((k[1][0] & 0x80) == 0x80) {
+            k[1] = xor(k[1], RB);
         }
 
         // Step 4.
-        Log.d(TAG, "L = " + BytesHelper.byteArrayToString(L, L.length));
-        Log.d(TAG, "K1 = " + BytesHelper.byteArrayToString(K[0], K[0].length));
-        Log.d(TAG, "K2 = " + BytesHelper.byteArrayToString(K[1], K[1].length));
+        Log.d(TAG, "L = " + BytesHelper.byteArrayToString(l, l.length));
+        Log.d(TAG, "K1 = " + BytesHelper.byteArrayToString(k[0], k[0].length));
+        Log.d(TAG, "K2 = " + BytesHelper.byteArrayToString(k[1], k[1].length));
 
-        return K;
+        return k;
     }
 }

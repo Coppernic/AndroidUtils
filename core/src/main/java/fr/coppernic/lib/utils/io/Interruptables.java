@@ -6,7 +6,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class to use Interruptables objects quietly
  */
-public class Interruptables {
+public final class Interruptables {
+
+    private Interruptables() {
+    }
 
     /**
      * Acquire a sem permit quietly

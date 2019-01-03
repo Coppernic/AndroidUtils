@@ -23,7 +23,7 @@ import timber.log.Timber;
  * Utility class to manipulate Bitmaps
  * Created by bastien on 01/12/15.
  */
-public class BitmapHelper {
+public final class BitmapHelper {
 
     private static final String TAG = "CpcBitmap";
 

@@ -6,6 +6,7 @@ plugins {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.noveogroup.android.check'
 
 repositories {
     google()
@@ -61,6 +62,22 @@ dependencies {
     androidTestImplementation('com.schibsted.spain:barista:2.4.0') {
         exclude group: 'com.android.support'
         exclude group: 'org.jetbrains.kotlin' // Only if you already use Kotlin in your project
+    }
+}
+
+check {
+    abortOnError true
+    checkstyle {
+        //config is in config/checkstyle.xml which is loaded by default
+        config file("config/checkstyle.xml")
+    }
+    findbugs {
+        skip true
+        config file("config/findbugs-hard.xml")
+    }
+    pmd {
+        skip true
+        config easy()
     }
 }
 

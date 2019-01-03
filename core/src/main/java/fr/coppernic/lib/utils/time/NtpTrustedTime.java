@@ -31,7 +31,7 @@ import fr.coppernic.lib.utils.net.SntpClient;
  * time source.
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-public class NtpTrustedTime implements TrustedTime {
+public final class NtpTrustedTime implements TrustedTime {
     /**
      * "pool.ntp.org"
      */

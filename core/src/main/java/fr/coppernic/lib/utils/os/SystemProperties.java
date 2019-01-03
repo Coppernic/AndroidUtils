@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  *
  * @author bastien
  */
-public class SystemProperties {
+public final class SystemProperties {
 
     private SystemProperties() {
     }
@@ -20,9 +20,9 @@ public class SystemProperties {
     @SuppressLint("PrivateApi")
     public static void set(String key, String value) throws OsException {
         try {
-            final Class SystemProperties = Class.forName("android.os.SystemProperties");
-            final Method set1 = SystemProperties.getMethod("set", String.class, String.class);
-            set1.invoke(SystemProperties, key, value);
+            final Class systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            final Method set1 = systemPropertiesClass.getMethod("set", String.class, String.class);
+            set1.invoke(systemPropertiesClass, key, value);
         } catch (Exception e) {
             throw new OsException(e);
         }
@@ -39,8 +39,8 @@ public class SystemProperties {
     @SuppressLint("PrivateApi")
     public static String get(String key, String defaultValue) {
         try {
-            final Class<?> systemProperties = Class.forName("android.os.SystemProperties");
-            final Method get = systemProperties.getMethod("get", String.class, String.class);
+            final Class<?> systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            final Method get = systemPropertiesClass.getMethod("get", String.class, String.class);
             return (String) get.invoke(null, key, defaultValue);
         } catch (Exception e) {
             // This should never happen
