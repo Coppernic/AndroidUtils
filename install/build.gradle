@@ -39,6 +39,8 @@ dependencies {
 
     implementation "com.android.support:support-v4:$support"
 
+    implementation 'fr.coppernic.lib.android-utils:core:0.0.1'
+
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.0'
     implementation 'fr.bipi.treessence:treessence:0.2.2'
@@ -58,7 +60,7 @@ dependencies {
 }
 
 check {
-    abortOnError true
+    abortOnError false
     checkstyle {
         //config is in config/checkstyle.xml which is loaded by default
         config file("config/checkstyle.xml")

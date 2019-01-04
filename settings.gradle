@@ -17,4 +17,4 @@ include 'services:webservice'
 
 rootProject.name = 'AndroidUtils'
 
-include ':core'
+include ':core', ':install', ':installsample', ':testapp'

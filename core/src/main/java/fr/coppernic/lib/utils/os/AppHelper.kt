@@ -17,7 +17,6 @@ import fr.coppernic.lib.utils.io.BytesHelper
 import fr.coppernic.lib.utils.result.RESULT
 import timber.log.Timber
 
-
 const val UID_SYSTEM = 1000
 
 @Suppress("MemberVisibilityCanBePrivate")

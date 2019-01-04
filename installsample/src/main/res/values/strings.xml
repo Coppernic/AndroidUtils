@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">InstallSample</string>
+    <string name="action_settings">Settings</string>
+    <string name="install_one">Install 1</string>
+    <string name="intall_two">Install 2</string>
+    <string name="install_three">Install 3</string>
+    <string name="uninstall_one">Uninstall 1</string>
+    <string name="uninstall_two">Uninstall 2</string>
+    <string name="uninstall_three">Uninstall 3</string>
+</resources>

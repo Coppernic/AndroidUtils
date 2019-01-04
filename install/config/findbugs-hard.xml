@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+FindBugs exclude filter
+Severity: HARD
+-->
+<FindBugsFilter>
+    <Match>
+        <Class name="~.*\.BuildConfig" />
+    </Match>
+    <Match>
+        <Class name="~.*\.R" />
+    </Match>
+    <Match>
+        <Class name="~.*\.R\$.*" />
+    </Match>
+    <Match>
+        <Class name="fr.coppernic.sdk.powermgmt.idplatform.helper.PowerHelperTest"/>
+        <Bug pattern="URF_UNREAD_FIELD" />
+    </Match>
+    <Match>
+        <!-- Class name="fr.coppernic.sdk.serial.api.SerialPortFinder"/-->
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
+    </Match>
+    <Match>
+        <Class name="fr.coppernic.sdk.powermgmt.cone.PowerUtilsQuickTest"/>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
+    </Match>
+    <Match>
+        <Class name="fr.coppernic.sdk.powermgmt.cone.PowerUtilsTest"/>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
+    </Match>
+    <Match>
+        <Class name="fr.coppernic.sdk.power.api.notifier.PowerNotifierTest"/>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+    </Match>
+</FindBugsFilter>

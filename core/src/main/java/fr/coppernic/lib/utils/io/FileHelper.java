@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +18,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.List;
 
 import fr.coppernic.lib.utils.result.RESULT;
@@ -377,17 +379,22 @@ public final class FileHelper {
     }
 
     /**
-     * *Return true if file exists and is non empty
+     * Return true if file exists and is non empty
      *
      * @param path file's path
      * @return true if file exists and is non empty
      */
     public static boolean fileExistAndNonEmpty(String path) {
-        File f = new File(path);
-        return f.exists() && f.length() > 0;
+        return fileExistAndNonEmpty(new File(path));
     }
 
-    public static boolean fileExistAndNonEmpty(List<Uri> lUri) {
+    /**
+     * Return true if all files exist and are non empty
+     *
+     * @param lUri collection of File's Uri
+     * @return true if files exist and are non empty
+     */
+    public static boolean fileExistAndNonEmpty(Collection<Uri> lUri) {
         for (Uri uri : lUri) {
             if (!fileExistAndNonEmpty(uri.getPath())) {
                 return false;
@@ -446,37 +453,6 @@ public final class FileHelper {
                 Timber.v("Error in deleting %s", f.getName());
             }
         }
-    }
-
-    /**
-     * Store data bytes in file designed by Uri
-     *
-     * @param uri  file's uri
-     * @param data data to write
-     * @return OK or ERROR :
-     * <ul>
-     * <li>FILE_NOT_FOUND</li>
-     * <li>IO</li>
-     * </ul>
-     */
-    public static RESULT saveFile(Uri uri, byte[] data) {
-        RESULT res = RESULT.OK;
-        File f = new File(uri.getPath());
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(f);
-            out.write(data);
-            out.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            res = RESULT.FILE_NOT_FOUND;
-        } catch (IOException e) {
-            e.printStackTrace();
-            res = RESULT.IO;
-        } finally {
-            Closeables.closeQuietly(out);
-        }
-        return res;
     }
 
     /**
@@ -636,5 +612,64 @@ public final class FileHelper {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * Store data bytes in file designed by Uri
+     * <p>
+     * A file with {@link Uri#getPath()} will be created
+     *
+     * @param uri  file's uri
+     * @param data data to write
+     * @return OK or ERROR :
+     * <ul>
+     * <li>FILE_NOT_FOUND</li>
+     * <li>IO</li>
+     * </ul>
+     */
+    public static RESULT saveFile(Uri uri, byte[] data) {
+        //TODO better handling of Uri
+        InputStream is = new ByteArrayInputStream(data);
+        String path = uri.getPath();
+        RESULT res;
+        if (path != null) {
+            res = saveFile(new File(path), is);
+        } else {
+            res = RESULT.FILE_NOT_FOUND;
+        }
+        return res;
+    }
+
+    /**
+     * Save all data contained in input stream into file
+     * <p>
+     * Input stream is closed by this method
+     *
+     * @param f  File to be written
+     * @param is Data to write
+     * @return OK or ERROR :
+     * <ul>
+     * <li>FILE_NOT_FOUND</li>
+     * <li>IO</li>
+     * </ul>
+     */
+    public static RESULT saveFile(File f, InputStream is) {
+        RESULT res = RESULT.OK;
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(f);
+            BytesHelper.copyStream(is, out);
+            out.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            res = RESULT.FILE_NOT_FOUND;
+        } catch (IOException e) {
+            e.printStackTrace();
+            res = RESULT.IO;
+        } finally {
+            Closeables.closeQuietly(out);
+            Closeables.closeQuietly(is);
+        }
+        return res;
     }
 }
