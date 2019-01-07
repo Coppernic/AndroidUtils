@@ -16,6 +16,8 @@ import fr.coppernic.lib.utils.core.HashHelpers
 import fr.coppernic.lib.utils.io.BytesHelper
 import fr.coppernic.lib.utils.result.RESULT
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 const val UID_SYSTEM = 1000
 
@@ -137,7 +139,7 @@ object AppHelper {
      * @return the application's signature
      */
     @SuppressLint("PackageManagerGetSignatures")
-    fun getAppSignature(context: Context, packageName: String = context.packageName): List<Signature> {
+    fun getAppSignatures(context: Context, packageName: String = context.packageName): List<Signature> {
         if (packageName.trim().isEmpty()) return emptyList()
         return try {
             val pm = context.packageManager
@@ -148,10 +150,18 @@ object AppHelper {
         }
     }
 
-    fun getAppSignatureHash(context: Context, packageName: String, algorithm: String): String {
+    fun getAppSignaturesHash(context: Context, packageName: String, algorithm: String): String {
         if (packageName.trim().isEmpty()) return ""
-        val signature = getAppSignature(context, packageName)
-        return if (signature.isEmpty()) "" else BytesHelper.byteArrayToString(HashHelpers.hashTemplate(signature[0].toByteArray(), algorithm))
+
+        return try {
+            val outputStream = ByteArrayOutputStream()
+            getAppSignatures(context, packageName).forEach { outputStream.write(it.toByteArray()) }
+            val hash = HashHelpers.hashTemplate(outputStream.toByteArray(), algorithm)
+
+            BytesHelper.byteArrayToString(hash)
+        } catch (e:IOException) {
+            ""
+        }
     }
 
     /**
@@ -160,8 +170,8 @@ object AppHelper {
      * @param packageName The name of the package.
      * @return the application's signature for SHA1 value
      */
-    fun getAppSignatureSHA1(context: Context, packageName: String = context.packageName): String {
-        return getAppSignatureHash(context, packageName, "SHA1")
+    fun getAppSignaturesSHA1(context: Context, packageName: String = context.packageName): String {
+        return getAppSignaturesHash(context, packageName, "SHA1")
     }
 
     /**
@@ -170,8 +180,8 @@ object AppHelper {
      * @param packageName The name of the package.
      * @return the application's signature for SHA256 value
      */
-    fun getAppSignatureSHA256(context: Context, packageName: String = context.packageName): String {
-        return getAppSignatureHash(context, packageName, "SHA256")
+    fun getAppSignaturesSHA256(context: Context, packageName: String = context.packageName): String {
+        return getAppSignaturesHash(context, packageName, "SHA256")
     }
 
     /**
@@ -180,8 +190,8 @@ object AppHelper {
      * @param packageName The name of the package.
      * @return the application's signature for MD5 value
      */
-    fun getAppSignatureMD5(context: Context, packageName: String = context.packageName): String {
-        return getAppSignatureHash(context, packageName, "MD5")
+    fun getAppSignaturesMD5(context: Context, packageName: String = context.packageName): String {
+        return getAppSignaturesHash(context, packageName, "MD5")
     }
 
     /**

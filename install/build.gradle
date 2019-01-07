@@ -60,7 +60,7 @@ dependencies {
 }
 
 check {
-    abortOnError false
+    abortOnError true
     checkstyle {
         //config is in config/checkstyle.xml which is loaded by default
         config file("config/checkstyle.xml")
