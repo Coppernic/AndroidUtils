@@ -119,7 +119,8 @@ bintray {
     publish = true
     pkg {
         repo = "maven"
-        name = project.name
+        // We are using Root project because there are several artifacts but for the same project !
+        name = rootProject.name
         userOrg = 'coppernic'
         licenses = ["Apache-2.0"]
         labels = ['Utils', 'Android']
