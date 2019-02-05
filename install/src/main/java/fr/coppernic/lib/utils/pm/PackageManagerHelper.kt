@@ -14,8 +14,11 @@ import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import fr.coppernic.lib.utils.install.BuildConfig
 import fr.coppernic.lib.utils.io.Closeables
 import fr.coppernic.lib.utils.io.Disposable
+import fr.coppernic.lib.utils.os.AppHelper
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -32,7 +35,6 @@ class PackageManagerHelper constructor(private val context: Context) : Disposabl
     private val installMethod: Method
     private val uninstallMethod: Method
     private val registered = AtomicBoolean(false)
-    private var state = State.IDLE
 
     private val installObserver = object : IPackageInstallObserver.Stub() {
         override fun packageInstalled(packageName: String, returnCode: Int) {
@@ -56,15 +58,22 @@ class PackageManagerHelper constructor(private val context: Context) : Disposabl
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action ?: ""
             val returnCode = intent.getIntExtra(EXTRA_LEGACY_STATUS, STATUS_FAILURE)
             val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
-            when (state) {
-                State.INSTALLING -> packageObserver.onPackageInstalled(packageName, returnCode)
-                State.UNINSTALLING -> packageObserver.onPackageDeleted(packageName, returnCode)
-                State.IDLE -> {
+
+            if (BuildConfig.DEBUG) {
+                Timber.v("package $packageName, code $returnCode")
+                Timber.v("Intent $intent, ${bundleToString(intent.extras)}")
+            }
+
+            when (action) {
+                BROADCAST_ACTION_INSTALL -> packageObserver.onPackageInstalled(packageName, returnCode)
+                BROADCAST_ACTION_UNINSTALL -> packageObserver.onPackageDeleted(packageName, returnCode)
+                else -> {
+                    Timber.w("Intent received but not handled : $intent, ${bundleToString(intent.extras)}")
                 }
             }
-            state = State.IDLE
         }
     }
 
@@ -99,7 +108,9 @@ class PackageManagerHelper constructor(private val context: Context) : Disposabl
      */
     @Throws(PackageException::class)
     fun uninstallPackage(packageName: String, flags: Int = 0) {
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (!AppHelper.isPackageInstalled(context, packageName)) {
+            packageObserver.onPackageDeleted(packageName, DELETE_SUCCEEDED)
+        } else if (Build.VERSION.SDK_INT >= 24) {
             uninstallPackageStage(packageName)
         } else {
             if (isDeviceOwner(packageName)) {
@@ -282,6 +293,18 @@ class PackageManagerHelper constructor(private val context: Context) : Disposabl
 
         val manager = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager?
         return manager?.isDeviceOwnerApp(packageName) ?: false
+    }
+
+    private fun bundleToString(bundle: Bundle?): String {
+        val sb = StringBuilder()
+        sb.append("Bundle{\n")
+        if (bundle != null) {
+            for (key in bundle.keySet()) {
+                sb.append(key).append(": \"").append(bundle.get(key)).append("\"\n")
+            }
+        }
+        sb.append("}")
+        return sb.toString()
     }
 }
 

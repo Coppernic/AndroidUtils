@@ -23,7 +23,7 @@ licenses:
   - '.+'
 
 script:
-    ./gradlew clean :core:build :install:build
+    ./gradlew clean build
 
 cache:
   directories:

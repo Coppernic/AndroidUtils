@@ -75,7 +75,7 @@ object AppHelper {
             val info = pm.getPackageInfo(packageName, 0)
             info != null
         } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
+            Timber.v(e.toString())
             false
         }
     }

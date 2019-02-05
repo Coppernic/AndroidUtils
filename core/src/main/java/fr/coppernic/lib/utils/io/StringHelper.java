@@ -1,6 +1,11 @@
 package fr.coppernic.lib.utils.io;
 
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +28,7 @@ public final class StringHelper {
      */
     public static String stringToMac(String s) {
 
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         if (!s.matches("[0-9A-Fa-f]{12}")) {
             // Log.e(TAG, "String does not match : " + s);
         } else {
@@ -313,4 +318,22 @@ public final class StringHelper {
         return sb.toString();
     }
 
+    /**
+     * Generate a string representation of provided bundle
+     *
+     * @param bundle Android bundle
+     * @return String representation of the bundle
+     */
+    public static @NonNull
+    String bundleToString(@Nullable Bundle bundle) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Bundle{\n");
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+                sb.append(key).append(": \"").append(bundle.get(key)).append("\"\n");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

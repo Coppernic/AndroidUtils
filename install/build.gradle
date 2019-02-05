@@ -39,7 +39,7 @@ dependencies {
 
     implementation "com.android.support:support-v4:$support"
 
-    implementation 'fr.coppernic.lib.android-utils:core:0.0.1'
+    implementation 'fr.coppernic.lib.android-utils:core:0.0.4'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.0'

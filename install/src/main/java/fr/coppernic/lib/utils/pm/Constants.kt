@@ -349,8 +349,8 @@ const val DELETE_FAILED_ABORTED = -5
  * */
 const val DELETE_FAILED_USED_SHARED_LIBRARY = -6
 
-internal const val BROADCAST_ACTION_INSTALL = "org.fdroid.fdroid.PrivilegedExtension.ACTION_INSTALL_COMMIT"
-internal const val BROADCAST_ACTION_UNINSTALL = "org.fdroid.fdroid.PrivilegedExtension.ACTION_UNINSTALL_COMMIT"
+internal const val BROADCAST_ACTION_INSTALL = "fr.coppernic.lib.utils.install.ACTION_INSTALL_COMMIT"
+internal const val BROADCAST_ACTION_UNINSTALL = "fr.coppernic.lib.utils.install.ACTION_UNINSTALL_COMMIT"
 internal const val BROADCAST_SENDER_PERMISSION = "android.permission.INSTALL_PACKAGES"
 internal const val EXTRA_LEGACY_STATUS = "android.content.pm.extra.LEGACY_STATUS"
 
