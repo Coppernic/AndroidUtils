@@ -119,7 +119,7 @@ bintray {
     publish = true
     pkg {
         repo = "maven"
-        name = rootProject.name
+        name = project.name
         userOrg = 'coppernic'
         licenses = ["Apache-2.0"]
         labels = ['Utils', 'Android']

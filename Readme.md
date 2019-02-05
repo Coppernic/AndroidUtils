@@ -8,11 +8,24 @@ Collection of utilities for Android applications
 
 This lib aims to provide some class utilities to help developing Android applications.
 
+### Core
+
+This lib provide utility class and methods
+
+### Install
+
+This lib provides all necessary classes to install app on Android. Application using this lib needs to share `android.uid.system`
+
 ## Download
 
 ```
-dependencies {
+repositories {
+    jcenter()
+}
 
+dependencies {
+    implement 'fr.coppernic.lib.android-utils:core:0.0.2'
+    implement 'fr.coppernic.lib.android-utils:install:0.0.2'
 }
 ```
 
