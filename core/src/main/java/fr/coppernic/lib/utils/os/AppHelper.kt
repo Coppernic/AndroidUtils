@@ -159,7 +159,7 @@ object AppHelper {
             val hash = HashHelpers.hashTemplate(outputStream.toByteArray(), algorithm)
 
             BytesHelper.byteArrayToString(hash)
-        } catch (e:IOException) {
+        } catch (e: IOException) {
             ""
         }
     }

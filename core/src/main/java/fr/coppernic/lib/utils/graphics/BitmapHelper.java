@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -94,6 +93,19 @@ public final class BitmapHelper {
         return bitmap;
     }
 
+    public static Bitmap fromBytesToGreyBitmap(byte[] array, int width, int height) {
+        byte[] bits = new byte[array.length * 4];
+        for (int i = 0; i < array.length; i++) {
+            bits[i * 4] = array[i];
+            bits[i * 4 + 1] = array[i];
+            bits[i * 4 + 2] = array[i];
+            bits[i * 4 + 3] = -1;
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(bits));
+        return bitmap;
+    }
+
     /**
      * Get raw bytes contained in Bitmap
      *
@@ -105,7 +117,7 @@ public final class BitmapHelper {
         final int size = bitmap.getWidth() * bitmap.getHeight() * 4;
         ByteBuffer buf = ByteBuffer.allocate(size);
         bitmap.copyPixelsToBuffer(buf);
-        Log.d(TAG, size + " bytes was copied");
+        Timber.d("%s bytes was copied", size);
         return buf.array();
     }
 
@@ -132,19 +144,19 @@ public final class BitmapHelper {
             out = new FileOutputStream(uri.getPath());
             String ext = FileHelper.getExtension(uri.getPath()).toLowerCase(Locale.US);
             if (ext.contains("png")) {
-                Log.d(TAG, "Save png bitmap");
+                Timber.d("Save png bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             } else if (ext.contains("jpg")) {
-                Log.d(TAG, "Save jpg bitmap");
+                Timber.d("Save jpg bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             } else if (ext.contains("raw")) {
-                Log.d(TAG, "Save raw bitmap");
+                Timber.d("Save raw bitmap");
                 out.write(getBytesFromBitmap(bitmap));
             } else if (ext.contains("bmp")) {
-                Log.d(TAG, "Save bmp bitmap");
+                Timber.d("Save bmp bitmap");
                 ret = BmpHelper.save(bitmap, out);
             } else {
-                Log.e(TAG, "File ext not recognized : " + ext);
+                Timber.e("File ext not recognized : " + ext);
                 ret = false;
             }
             out.flush();
