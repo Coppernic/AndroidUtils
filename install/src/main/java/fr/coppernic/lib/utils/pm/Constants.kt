@@ -1,7 +1,7 @@
 package fr.coppernic.lib.utils.pm
 
+import android.content.pm.IPackageDeleteObserver
 import android.content.pm.IPackageInstallObserver
-
 
 /**
  * Installation return code: this is passed to the
@@ -170,49 +170,39 @@ const val INSTALL_FAILED_INVALID_INSTALL_LOCATION = -19
  * location because the media is not available.
  */
 const val INSTALL_FAILED_MEDIA_UNAVAILABLE = -20
-
 /**
  * Installation return code: this is passed to the [IPackageInstallObserver] by
  *
  * @link #installPackage(android.net.Uri)} if
  * the new package couldn't be installed because the verification timed out.
- * @hide
  */
 const val INSTALL_FAILED_VERIFICATION_TIMEOUT = -21
-
 /**
  * Installation return code: this is passed to the [IPackageInstallObserver] by
  *
  * @link #installPackage(android.net.Uri, IPackageInstallObserver, int)} if
  * the new package couldn't be installed because the verification did not succeed.
- * @hide
  */
 const val INSTALL_FAILED_VERIFICATION_FAILURE = -22
-
 /**
  * Installation return code: this is passed to the [IPackageInstallObserver] by
  *
  * @link #installPackage(android.net.Uri, IPackageInstallObserver, int)} if
  * the package changed from what the calling program expected.
- * @hide
  */
 const val INSTALL_FAILED_PACKAGE_CHANGED = -23
-
 /**
  * Installation return code: this is passed to the [IPackageInstallObserver] by
  *
  * @link #installPackage(android.net.Uri, IPackageInstallObserver, int)} if
  * the new package is assigned a different UID than it previously held.
- * @hide
  */
 const val INSTALL_FAILED_UID_CHANGED = -24
-
 /**
  * Installation return code: this is passed to the [IPackageInstallObserver] by
  *
  * @link #installPackage(android.net.Uri, IPackageInstallObserver, int)} if
  * the new package has an older version code than the currently installed package.
- * @hide
  */
 const val INSTALL_FAILED_VERSION_DOWNGRADE = -25
 
@@ -300,6 +290,64 @@ const val INSTALL_PARSE_FAILED_MANIFEST_EMPTY = -109
  */
 const val INSTALL_FAILED_INTERNAL_ERROR = -110
 const val INSTALL_REPLACE_EXISTING = 2
+
+/**
+ * Flag parameter for [.deletePackage] to indicate that you don't want to delete the
+ * package's data directory.
+ */
+const val DELETE_KEEP_DATA = 0x00000001
+/**
+ * Flag parameter for [.deletePackage] to indicate that you want the
+ * package deleted for all users.
+ */
+const val DELETE_ALL_USERS = 0x00000002
+/**
+ * Flag parameter for [.deletePackage] to indicate that, if you are calling
+ * uninstall on a system that has been updated, then don't do the normal process
+ * of uninstalling the update and rolling back to the older system version (which
+ * needs to happen for all users); instead, just mark the app as uninstalled for
+ * the current user.
+ */
+const val DELETE_SYSTEM_APP = 0x00000004
+/**
+ * Flag parameter for [.deletePackage] to indicate that, if you are calling
+ * uninstall on a package that is replaced to provide new feature splits, the
+ * existing application should not be killed during the removal process.
+ */
+const val DELETE_DONT_KILL_APP = 0x00000008
+
+/**
+ * Deletion failed return code: this is passed to the
+ * [IPackageDeleteObserver] if the system failed to delete the package
+ * for an unspecified reason.
+ */
+const val DELETE_FAILED_INTERNAL_ERROR = -1
+/**
+ * Deletion failed return code: this is passed to the
+ * [IPackageDeleteObserver] if the system failed to delete the package
+ * because it is the active DevicePolicy manager.
+ */
+const val DELETE_FAILED_DEVICE_POLICY_MANAGER = -2
+/**
+ * Deletion failed return code: this is passed to the
+ * [IPackageDeleteObserver] if the system failed to delete the package
+ * since the user is restricted.
+ */
+const val DELETE_FAILED_USER_RESTRICTED = -3
+/**
+ * Deletion failed return code: this is passed to the
+ * [IPackageDeleteObserver] if the system failed to delete the package
+ * because a profile or device owner has marked the package as
+ * uninstallable.
+ */
+const val DELETE_FAILED_OWNER_BLOCKED = -4
+const val DELETE_FAILED_ABORTED = -5
+/**
+ * Deletion failed return code: this is passed to the
+ * [IPackageDeleteObserver] if the system failed to delete the package
+ * because the packge is a shared library used by other installed packages.
+ * */
+const val DELETE_FAILED_USED_SHARED_LIBRARY = -6
 
 internal const val BROADCAST_ACTION_INSTALL = "org.fdroid.fdroid.PrivilegedExtension.ACTION_INSTALL_COMMIT"
 internal const val BROADCAST_ACTION_UNINSTALL = "org.fdroid.fdroid.PrivilegedExtension.ACTION_UNINSTALL_COMMIT"
