@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    implement 'fr.coppernic.lib.android-utils:core:0.0.2'
-    implement 'fr.coppernic.lib.android-utils:install:0.0.2'
+    implement 'fr.coppernic.lib.android-utils:core:0.0.4'
+    implement 'fr.coppernic.lib.android-utils:install:0.0.4'
 }
 ```
 
