@@ -13,7 +13,7 @@ import static fr.coppernic.lib.utils.io.BytesHelper.byteArrayToString;
  */
 @SuppressWarnings("WeakerAccess")
 public final class L {
-    private static int sDepth = 2;
+    public static int sDepth = 3;
 
     private L() {
     }

@@ -20,6 +20,7 @@ public class LTest {
     @Test
     public void testM() {
         Timber.plant(new TestTree("test", "testM"));
+        L.sDepth = 2;
         L.m("test");
     }
 
