@@ -36,8 +36,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "com.android.support:support-v4:$support"
-
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'fr.bipi.treessence:treessence:0.3.0'
@@ -50,10 +48,6 @@ dependencies {
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'org.awaitility:awaitility:3.0.0'
-    androidTestImplementation('com.schibsted.spain:barista:2.4.0') {
-        exclude group: 'com.android.support'
-        exclude group: 'org.jetbrains.kotlin' // Only if you already use Kotlin in your project
-    }
 }
 
 apply from: rootProject.file('gradle/gradle-publish.gradle')
