@@ -1,2 +1,12 @@
-<manifest package="fr.coppernic.lib.utils.net"
-    />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:tools="http://schemas.android.com/tools"
+          package="fr.coppernic.lib.utils.net"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CONNECTIVITY_INTERNAL"
+                     tools:ignore="ProtectedPermissions"/>
+
+</manifest>
