@@ -1,5 +1,7 @@
 package fr.coppernic.lib.utils.io;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -62,7 +64,7 @@ public final class Closeables {
      * @param closeable the {@code Closeable} object to be closed, or null, in which case this method
      *                  does nothing
      */
-    public static void closeQuietly(Closeable closeable) {
+    public static void closeQuietly(@Nullable Closeable closeable) {
         if (closeable != null) {
             try {
                 close(closeable, true);

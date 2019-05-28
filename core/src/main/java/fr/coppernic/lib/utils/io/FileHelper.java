@@ -1,8 +1,15 @@
 package fr.coppernic.lib.utils.io;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
@@ -22,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 import fr.coppernic.lib.utils.result.RESULT;
+import fr.coppernic.lib.utils.result.Result;
 import timber.log.Timber;
 
 import static fr.coppernic.lib.utils.BuildConfig.DEBUG;
@@ -31,6 +39,7 @@ import static fr.coppernic.lib.utils.BuildConfig.DEBUG;
  *
  * @author bastien.paul
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class FileHelper {
 
     public static final String MIME_TYPE_AUDIO = "audio/*";
@@ -42,7 +51,7 @@ public final class FileHelper {
     /**
      * The extension separator character.
      */
-    public static final String EXTENSION_SEPARATOR = ".";
+    private static final String EXTENSION_SEPARATOR = ".";
     /**
      * The Unix separator character.
      */
@@ -55,6 +64,7 @@ public final class FileHelper {
 
     private static final int NOT_FOUND = -1;
 
+    private static final int BUFFER_SIZE = 8192;
 
     private FileHelper() {
     }
@@ -130,6 +140,42 @@ public final class FileHelper {
         } else {
             return filename.substring(index + 1);
         }
+    }
+
+    public static String getFileName(final String path) {
+        if (path == null) {
+            return null;
+        }
+        final int index = indexOfLastSeparator(path);
+        if (index == NOT_FOUND) {
+            return "";
+        } else {
+            return path.substring(index + 1);
+        }
+    }
+
+    public static String[] splitFileNameAndExt(final String fileName) {
+        String name = fileName;
+        String extension = "";
+        int i = indexOfExtension(fileName);
+        if (i != -1) {
+            name = fileName.substring(0, i);
+            extension = fileName.substring(i);
+        }
+
+        return new String[]{name, extension};
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static File rename(File file, String newName) {
+        File newFile = new File(file.getParent(), newName);
+        if (!newFile.equals(file)) {
+            if (newFile.exists() && newFile.delete()) {
+                newFile.delete();
+            }
+            file.renameTo(newFile);
+        }
+        return newFile;
     }
 
     /**
@@ -220,6 +266,7 @@ public final class FileHelper {
      * @param context Context
      * @return A writable dir or null if not found or writable
      */
+    @Deprecated // This logic should not be in lib
     public static File getWritableCacheDir(Context context) {
         File fl = context.getExternalCacheDir();
         if (fl != null && fl.canWrite()) {
@@ -241,6 +288,7 @@ public final class FileHelper {
      * @param context Context
      * @return A writable files dir or null if not found or writable
      */
+    @Deprecated // This logic should not be in lib
     public static File getWritableFilesDir(Context context) {
         File dir = context.getFilesDir();
         //noinspection ResultOfMethodCallIgnored
@@ -288,7 +336,7 @@ public final class FileHelper {
     public static String getSha1FromStream(InputStream is) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA1");
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int nRead;
 
             while ((nRead = is.read(buffer)) > 0) {
@@ -331,8 +379,44 @@ public final class FileHelper {
      * @param dest File destination
      * @return OK or ERROR
      */
-    public static RESULT copyFile(Uri src, Uri dest) {
-        return copyFile(new File(src.getPath()), new File(dest.getPath()));
+    public static Result copyFile(Uri src, Uri dest) {
+        String sourceScheme = src.getScheme() == null ? "" : src.getScheme();
+        String destScheme = dest.getScheme() == null ? "" : dest.getScheme();
+        String sourcePath = src.getPath() == null ? "" : src.getPath();
+        String destPath = dest.getPath() == null ? "" : dest.getPath();
+
+        if (sourceScheme.equals("file") && destScheme.equals("file")) {
+            return copyFile(new File(sourcePath), new File(destPath));
+        } else {
+            Timber.w("Cannot use other schemes than 'file' in copyFile()");
+            return RESULT.FILE_NOT_FOUND.toResult();
+        }
+    }
+
+    /**
+     * Copy file content
+     *
+     * @param src  File source
+     * @param dest File destination
+     * @return OK or ERROR
+     */
+    public static Result copyFile(Context context, Uri src, Uri dest) {
+        Result result = RESULT.OK.toResult();
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = context.getContentResolver().openInputStream(src);
+            os = context.getContentResolver().openOutputStream(dest);
+            BytesHelper.copyStream(is, os);
+        } catch (FileNotFoundException e) {
+            result = RESULT.FILE_NOT_FOUND.toResult().withCause(e);
+        } catch (IOException e) {
+            result = RESULT.IO.toResult().withCause(e);
+        } finally {
+            Closeables.closeQuietly(is);
+            Closeables.closeQuietly(os);
+        }
+        return result;
     }
 
     /**
@@ -346,8 +430,8 @@ public final class FileHelper {
      * <li>IO</li>
      * </ul>
      */
-    public static RESULT copyFile(File src, File dest) {
-        RESULT res = RESULT.OK;
+    public static Result copyFile(File src, File dest) {
+        Result res = RESULT.OK.toResult();
 
         Timber.d(
             "Copy from " + src.getAbsolutePath() + " into "
@@ -359,18 +443,11 @@ public final class FileHelper {
             in = new FileInputStream(src);
             out = new FileOutputStream(dest);
 
-            // Copy the bits from in stream to out stream
-            byte[] buf = new byte[8048];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
+            BytesHelper.copyStream(in, out);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            res = RESULT.FILE_NOT_FOUND;
+            res = RESULT.FILE_NOT_FOUND.toResult().withCause(e);
         } catch (IOException e) {
-            e.printStackTrace();
-            res = RESULT.IO;
+            res = RESULT.IO.toResult().withCause(e);
         } finally {
             Closeables.closeQuietly(in);
             Closeables.closeQuietly(out);
@@ -394,6 +471,7 @@ public final class FileHelper {
      * @param lUri collection of File's Uri
      * @return true if files exist and are non empty
      */
+    @Deprecated // Should be in application instead of lib
     public static boolean fileExistAndNonEmpty(Collection<Uri> lUri) {
         for (Uri uri : lUri) {
             if (!fileExistAndNonEmpty(uri.getPath())) {
@@ -419,6 +497,7 @@ public final class FileHelper {
      * @param uri Representing a file
      * @return true if file has been deleted, false otherwise
      */
+    @Deprecated // Should be in application instead of lib
     public static boolean deleteFileFromUri(Uri uri) {
         boolean ok = false;
         if (uri != null) {
@@ -434,6 +513,7 @@ public final class FileHelper {
         return ok;
     }
 
+    @Deprecated // Should be in application instead of lib
     public static boolean deleteFileFromUri(List<Uri> lUri) {
         for (Uri uri : lUri) {
             deleteFileFromUri(uri);
@@ -461,9 +541,38 @@ public final class FileHelper {
      * @param uri Uri containing path of file
      * @return byte[] data or null if something goes wrong
      */
+    @Deprecated // Use public static byte[] getBytesFromFile(Context context, Uri uri) instead
     public static byte[] getBytesFromFile(Uri uri) {
-        File f = new File(uri.getPath());
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme();
+        String path = uri.getPath() == null ? "" : uri.getPath();
+        if (!scheme.equals("file")) {
+            path = "Please use 'file' scheme instead of '" + scheme + "' in Uri";
+        }
+        File f = new File(path);
         return getBytesFromFile(f);
+
+    }
+
+    /**
+     * Return bytes contained in file
+     *
+     * @param context Context needed if Uri has content scheme
+     * @param uri     Uri containing path of file
+     * @return byte[] data or null if something goes wrong
+     */
+    public static byte[] getBytesFromFile(Context context, Uri uri) {
+        byte[] ret = null;
+        InputStream is = null;
+        try {
+            is = context.getContentResolver().openInputStream(uri);
+            ret = BytesHelper.getBytesFromInputStream(is);
+        } catch (FileNotFoundException e) {
+            Timber.v(e);
+        } finally {
+            Closeables.closeQuietly(is);
+        }
+        return ret;
+
     }
 
     /**
@@ -503,7 +612,7 @@ public final class FileHelper {
             in = new FileInputStream(f);
             data = BytesHelper.getBytesFromInputStream(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.v(e);
         } finally {
             Closeables.closeQuietly(in);
         }
@@ -538,14 +647,15 @@ public final class FileHelper {
      * <li>INVALID_PARAM</li>
      * </ul>
      */
-    public static RESULT clearDirectory(File dir, boolean recursive, boolean deleteSelf) {
-        RESULT res = RESULT.OK;
+    @SuppressWarnings("UnusedReturnValue")
+    public static Result clearDirectory(File dir, boolean recursive, boolean deleteSelf) {
+        Result res = RESULT.OK.toResult();
         if (dir == null) {
             Timber.e("Dir is null");
-            res = RESULT.INVALID_PARAM;
+            res = RESULT.INVALID_PARAM.toResult();
         } else if (!dir.isDirectory()) {
             Timber.e("Dir is not a directory");
-            res = RESULT.INVALID_PARAM;
+            res = RESULT.INVALID_PARAM.toResult();
         } else {
             for (File f : dir.listFiles()) {
                 if (f.isDirectory() && recursive) {
@@ -556,7 +666,7 @@ public final class FileHelper {
                         if (DEBUG) {
                             Timber.v("Delete %s", f.getPath());
                         }
-                        res = f.delete() ? RESULT.OK : RESULT.ERROR;
+                        res = f.delete() ? res : RESULT.ERROR.toResult();
                     } else {
                         //ignore
                     }
@@ -565,7 +675,7 @@ public final class FileHelper {
                 if (DEBUG) {
                     Timber.v("Delete %s", dir.getPath());
                 }
-                res = dir.delete() ? RESULT.OK : RESULT.ERROR;
+                res = dir.delete() ? res : RESULT.ERROR.toResult();
             }
         }
         return res;
@@ -600,8 +710,7 @@ public final class FileHelper {
                                       + inputStream.available()
                                       + " bytes instead of a max of 100M");
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                inputStream));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
@@ -627,15 +736,50 @@ public final class FileHelper {
      * <li>IO</li>
      * </ul>
      */
-    public static RESULT saveFile(Uri uri, byte[] data) {
-        //TODO better handling of Uri
+    @Deprecated //in favor of public static RESULT saveFile(Context context, Uri uri, byte[] data)
+    public static Result saveFile(Uri uri, byte[] data) {
         InputStream is = new ByteArrayInputStream(data);
         String path = uri.getPath();
-        RESULT res;
+        Result res;
         if (path != null) {
             res = saveFile(new File(path), is);
         } else {
-            res = RESULT.FILE_NOT_FOUND;
+            res = RESULT.FILE_NOT_FOUND.toResult();
+        }
+        return res;
+    }
+
+    /**
+     * Store data bytes in file designed by Uri
+     * <p>
+     * A file with {@link Uri#getPath()} will be created
+     *
+     * @param context Context needed if Uri has content scheme
+     * @param uri     file's uri
+     * @param data    data to write
+     * @return OK or ERROR :
+     * <ul>
+     * <li>FILE_NOT_FOUND</li>
+     * <li>IO</li>
+     * </ul>
+     */
+    public static Result saveFile(Context context, Uri uri, byte[] data) {
+        Result res = RESULT.OK.toResult();
+        InputStream is = new ByteArrayInputStream(data);
+        OutputStream os = null;
+        try {
+            os = context.getContentResolver().openOutputStream(uri);
+            if (os != null) {
+                BytesHelper.copyStream(is, os);
+                os.flush();
+            }
+        } catch (FileNotFoundException e) {
+            res = RESULT.FILE_NOT_FOUND.toResult().withCause(e);
+        } catch (IOException e) {
+            res = RESULT.IO.toResult().withCause(e);
+        } finally {
+            Closeables.closeQuietly(os);
+            Closeables.closeQuietly(is);
         }
         return res;
     }
@@ -653,23 +797,171 @@ public final class FileHelper {
      * <li>IO</li>
      * </ul>
      */
-    public static RESULT saveFile(File f, InputStream is) {
-        RESULT res = RESULT.OK;
+    public static Result saveFile(File f, InputStream is) {
+        Result res = RESULT.OK.toResult();
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(f);
             BytesHelper.copyStream(is, out);
             out.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            res = RESULT.FILE_NOT_FOUND;
+            res = RESULT.FILE_NOT_FOUND.toResult().withCause(e);
         } catch (IOException e) {
-            e.printStackTrace();
-            res = RESULT.IO;
+            res = RESULT.IO.toResult().withCause(e);
         } finally {
             Closeables.closeQuietly(out);
             Closeables.closeQuietly(is);
         }
         return res;
     }
+
+    /**
+     * Convert a Uri to a file
+     *
+     * @param context Context needed to open Uri with 'content' scheme
+     * @param uri     Uri to convert
+     * @return A file
+     */
+    public static File fromUriToFile(Context context, Uri uri) throws IOException {
+        String path = "";
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme();
+        if (scheme.equals("file")) {
+            path = uri.getPath() == null ? "" : uri.getPath();
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            if (isDownloadsDocument(uri)) {
+                String id = DocumentsContract.getDocumentId(uri);
+                if (id.matches("[0-9]+")) {
+                    Uri newUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
+                                                            Long.parseLong(id));
+                    path = getDataColumn(context, newUri);
+                }
+            } else if (isExternalStorageDocument(uri)) {
+                String id = DocumentsContract.getDocumentId(uri);
+                String[] parts = id.split(":");
+                if (parts.length > 1 && parts[0].equalsIgnoreCase("primary")) {
+                    path = combinePath(Environment.getExternalStorageDirectory().getAbsolutePath(), parts[1]);
+                }
+            } else if (isMediaDocument(uri)) {
+                String id = DocumentsContract.getDocumentId(uri);
+                String[] split = id.split(":");
+                Uri contentUri;
+                if (split.length > 1) {
+                    switch (split[0]) {
+                        case "video":
+                            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        case "audio":
+                            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        default:
+                            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                    }
+
+                    String selection = "_id=?";
+                    String[] selectionArgs = new String[]{split[1]};
+                    path = getDataColumn(context, contentUri, selection, selectionArgs);
+                }
+            }
+        }
+
+        // Second try
+        if (path.isEmpty()) {
+            path = getDataColumn(context, uri);
+        }
+
+        // Third try, copy content of remote file to the local one
+        if (path.isEmpty()) {
+            String fileName = getFileNameFromUri(context, uri);
+            String[] splitName = splitFileNameAndExt(fileName);
+            File tempFile = File.createTempFile(splitName[0], splitName[1]);
+            tempFile = rename(tempFile, fileName);
+            tempFile.deleteOnExit();
+
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = context.getContentResolver().openInputStream(uri);
+                os = new FileOutputStream(tempFile);
+                BytesHelper.copyStream(is, os);
+            } finally {
+                Closeables.closeQuietly(is);
+                Closeables.closeQuietly(os);
+            }
+
+            return tempFile;
+        }
+
+        return new File(path);
+    }
+
+
+    @NonNull
+    public static String getDataColumn(Context context, Uri uri) {
+        return getDataColumn(context, uri, null);
+    }
+
+    @NonNull
+    public static String getDataColumn(Context context, Uri uri, String selection) {
+        return getDataColumn(context, uri, selection, null);
+    }
+
+    @NonNull
+    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        return getColumnContent(context, uri, MediaStore.Files.FileColumns.DATA, selection, selectionArgs);
+    }
+
+
+    @NonNull
+    public static String getNameColumn(Context context, Uri uri) {
+        return getColumnContent(context, uri, OpenableColumns.DISPLAY_NAME, null, null);
+    }
+
+
+    @NonNull
+    public static String getColumnContent(@NonNull Context context,
+                                          @NonNull Uri uri,
+                                          @NonNull String column,
+                                          @Nullable String selection,
+                                          @Nullable String[] selectionArgs) {
+        Cursor cursor = null;
+        try {
+            String[] projection = new String[]{column};
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String data = cursor.getString(cursor.getColumnIndex(column));
+                if (!data.equals("null")) {
+                    return data;
+                }
+            }
+        } finally {
+            Closeables.closeQuietly(cursor);
+        }
+        return "";
+    }
+
+    @NonNull
+    public static String getFileNameFromUri(@NonNull Context context, @NonNull Uri uri) {
+        String result = "";
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+            result = getNameColumn(context, uri);
+        }
+        if (result.isEmpty()) {
+            result = getFileName(uri.getPath() == null ? "" : uri.getPath());
+        }
+        return result;
+    }
+
+    public static boolean isMediaDocument(Uri uri) {
+        return uri.getAuthority() != null && uri.getAuthority().equals("com.android.providers.media.documents");
+    }
+
+    public static boolean isDownloadsDocument(Uri uri) {
+        return uri.getAuthority() != null && uri.getAuthority().equals("com.android.providers.downloads.documents");
+    }
+
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return uri.getAuthority() != null && uri.getAuthority().equals("com.android.externalstorage.documents");
+    }
+
 }

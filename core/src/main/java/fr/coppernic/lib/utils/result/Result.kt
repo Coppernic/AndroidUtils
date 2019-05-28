@@ -299,9 +299,12 @@ enum class RESULT {
     UNKNOWN
     ;
 
-
     fun toException(): ResultException {
-        return ResultException(this)
+        return ResultException(toResult())
+    }
+
+    fun toResult(): Result {
+        return Result(this)
     }
 
     companion object {
@@ -350,8 +353,52 @@ class ResultParcelable(val result: RESULT) : Parcelable {
     }
 }
 
-class ResultException(val result: RESULT) : Exception() {
+class ResultException : Exception {
+    val result: Result
+
+    constructor(result: Result) : super() {
+        this.result = result
+    }
+
+    constructor(result: Result, message: String?) : super(message) {
+        this.result = result
+    }
+
+    constructor(result: Result, message: String?, cause: Throwable?) : super(message, cause) {
+        this.result = result
+    }
+
+    constructor(result: Result, cause: Throwable?) : super(cause) {
+        this.result = result
+    }
+
+    constructor(result: Result, message: String?, cause: Throwable?, enableSuppression: Boolean, writableStackTrace: Boolean)
+            : super(message, cause, enableSuppression, writableStackTrace) {
+        this.result = result
+    }
+
     override fun toString(): String {
         return "${super.toString()}, $result"
+    }
+}
+
+data class Result(val result: RESULT, var message: String = "", var cause: Throwable? = null) {
+    fun toException(): ResultException {
+        return when {
+            message.isEmpty() && cause == null -> ResultException(this)
+            message.isEmpty() && cause != null -> ResultException(this, cause)
+            message.isNotEmpty() && cause == null -> ResultException(this, message)
+            else -> ResultException(this, message, cause)
+        }
+    }
+
+    fun withMessage(message: String): Result {
+        this.message = message
+        return this
+    }
+
+    fun withCause(cause: Throwable): Result {
+        this.cause = cause
+        return this
     }
 }

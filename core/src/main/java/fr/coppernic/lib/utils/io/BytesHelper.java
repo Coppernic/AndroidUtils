@@ -1,6 +1,7 @@
 package fr.coppernic.lib.utils.io;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -422,12 +423,14 @@ public final class BytesHelper {
     /**
      * Copy data from InputStream into OutputStream
      *
-     * @param input
-     * @param output
-     * @throws IOException
+     * @param input  input stream
+     * @param output output stream
+     * @throws IOException exception
      */
-    public static void copyStream(InputStream input, OutputStream output)
-        throws IOException {
+    public static void copyStream(@Nullable InputStream input, @Nullable OutputStream output) throws IOException {
+        if (input == null || output == null) {
+            return;
+        }
         byte[] buffer = new byte[2048]; // Adjust if you want
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {

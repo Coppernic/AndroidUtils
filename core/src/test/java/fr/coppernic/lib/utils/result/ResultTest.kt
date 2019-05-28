@@ -9,9 +9,9 @@ class ResultTest {
 
     @Test
     fun resultExceptionWithResult() {
-        val e = ResultException(RESULT.CANCELLED)
-        assertThat(e.toString(), `is`<String>("fr.coppernic.lib.utils.result.ResultException, CANCELLED"))
-        assertThat(e.result, `is`(RESULT.CANCELLED))
+        val e = ResultException(Result(RESULT.CANCELLED))
+        assertThat(e.toString(), `is`<String>("fr.coppernic.lib.utils.result.ResultException, Result(result=CANCELLED, message=, cause=null)"))
+        assertThat(e.result, `is`(Result(RESULT.CANCELLED)))
     }
 
     @Test
@@ -27,8 +27,8 @@ class ResultTest {
     @Test
     fun toException() {
         val e = RESULT.ALREADY_OPENED.toException()
-        assertThat(e.result, `is`(RESULT.ALREADY_OPENED))
-        assertThat(e.toString(), `is`("fr.coppernic.lib.utils.result.ResultException, ALREADY_OPENED"))
+        assertThat(e.result, `is`(Result(RESULT.ALREADY_OPENED)))
+        assertThat(e.toString(), `is`("fr.coppernic.lib.utils.result.ResultException, Result(result=ALREADY_OPENED, message=, cause=null)"))
     }
 
     @Test
