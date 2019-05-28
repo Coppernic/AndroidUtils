@@ -11,7 +11,7 @@ class ResultParcelableTest : RobolectricTest() {
     @Test
     fun parcelable() {
         val t = Throwable("message")
-        val resultOut = RESULT.ERROR.withCause(t)
+        val resultOut = RESULT.ERROR
         val cpcResultOut = ResultParcelable(resultOut)
 
         val parcel = Parcel.obtain()
@@ -22,8 +22,6 @@ class ResultParcelableTest : RobolectricTest() {
         val cpcResultIn = ResultParcelable.createFromParcel(parcel)
         val resultIn = cpcResultIn.result
         MatcherAssert.assertThat(resultIn, CoreMatchers.`is`(resultOut))
-        MatcherAssert.assertThat(resultIn.cause, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-        MatcherAssert.assertThat(resultIn.cause?.message, CoreMatchers.`is`("message"))
     }
 
 }

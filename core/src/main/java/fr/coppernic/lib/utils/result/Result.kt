@@ -299,34 +299,9 @@ enum class RESULT {
     UNKNOWN
     ;
 
-    var message: String = ""
-    var cause: Throwable? = null
-
-    fun withMessage(m: String): RESULT {
-        this.message = m
-        return this
-    }
-
-    fun withCause(t: Throwable): RESULT {
-        this.cause = t
-        return this
-    }
 
     fun toException(): ResultException {
         return ResultException(this)
-    }
-
-    fun toLogString(): String {
-        val sb = StringBuilder()
-        sb.append(this.name)
-        if (!this.message.isEmpty()) {
-            sb.append(", ").append(this.message)
-        }
-        val cause = this.cause
-        if (cause != null) {
-            sb.append(", cause: ").append(cause.toString())
-        }
-        return sb.toString()
     }
 
     companion object {
@@ -377,6 +352,6 @@ class ResultParcelable(val result: RESULT) : Parcelable {
 
 class ResultException(val result: RESULT) : Exception() {
     override fun toString(): String {
-        return "${javaClass.simpleName}: ${result.toLogString()}"
+        return "${super.toString()}, $result"
     }
 }
