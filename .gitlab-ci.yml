@@ -1,7 +1,4 @@
-image: coppernic/docker-android-sdk:184
-
-variables:
-  GIT_SSL_NO_VERIFY: "1"
+image: runmymind/docker-android-sdk:ubuntu-standalone
 
 cache:
   paths:
@@ -30,28 +27,18 @@ before_script:
   ##
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
-  - echo -e "Host gitlab.coppernic.local\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n\nHost gitlab-01.coppernic.local\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null" > ~/.ssh/config
+  - echo -e "Host gitlab.coppernic.local\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n\nHost gitlab-01.coppernic.local\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n\nHost gitlab.coppernic.fr\nStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n\n" > ~/.ssh/config
   # Try to put the code on a specific tag
   - if [ ! -z "$CI_COMMIT_TAG" ]; then git checkout "${CI_COMMIT_TAG}"; fi
 
-stages:
-  - build
-  - test
 
 build:
   stage: build
   script:
-    - ./gradlew -g .gradle assemble
+    - ./gradlew -g .gradle build
   artifacts:
     paths:
-    - app/build/outputs/
-
-unitTests:
-  stage: test
-  script:
-    - ./gradlew -g .gradle check
-  artifacts:
-    paths:
-    - app/build/reports/
+      - app/build/outputs/
+      - app/build/reports/
     reports:
       junit: app/build/test-results/**/*.xml

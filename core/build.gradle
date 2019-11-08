@@ -7,6 +7,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
+versioning {
+    releaseMode = 'snapshot'
+}
+
 android {
     compileSdkVersion 28
 
