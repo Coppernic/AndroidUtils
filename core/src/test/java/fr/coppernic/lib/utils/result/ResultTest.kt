@@ -34,7 +34,6 @@ class ResultTest {
     @Test
     @Throws(IOException::class, ClassNotFoundException::class)
     fun serialization() {
-        val t = Throwable("message")
         val resultOut = RESULT.ERROR
         val baos = ByteArrayOutputStream()
         val oos = ObjectOutputStream(baos)

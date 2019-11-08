@@ -2,7 +2,7 @@ package fr.coppernic.lib.utils.debug;
 
 import java.util.HashMap;
 
-import timber.log.Timber;
+import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
 
 /**
  * Code profiling class
@@ -10,7 +10,7 @@ import timber.log.Timber;
  */
 public final class SimpleProfiler {
 
-    private static final HashMap<String, Long> M_MAP_TIME = new HashMap<String, Long>();
+    private static final HashMap<String, Long> M_MAP_TIME = new HashMap<>();
     private static long mBeginTime = 0;
 
     private SimpleProfiler() {
@@ -31,7 +31,7 @@ public final class SimpleProfiler {
      */
     public static synchronized void end(String s) {
         long end = System.currentTimeMillis();
-        Timber.d("[Profiler] : Spent %d ms in %s", end - mBeginTime, s);
+        LOGGER.debug("[Profiler] : Spent {} ms in {}", end - mBeginTime, s);
     }
 
     /**
@@ -58,10 +58,10 @@ public final class SimpleProfiler {
             long end = System.currentTimeMillis();
             try {
                 //noinspection ConstantConditions
-                Timber.d("[Profiler] : Spent %d ms in %s", end - M_MAP_TIME.get(tag), tag);
+                LOGGER.debug("[Profiler] : Spent {} ms in {}", end - M_MAP_TIME.get(tag), tag);
             } catch (Exception e) {
-                Timber.d(e.toString());
-                Timber.d("Is key " + tag + " exists ? " + M_MAP_TIME.containsKey(tag));
+                LOGGER.debug(e.toString());
+                LOGGER.debug("Is key " + tag + " exists ? " + M_MAP_TIME.containsKey(tag));
             }
         }
     }

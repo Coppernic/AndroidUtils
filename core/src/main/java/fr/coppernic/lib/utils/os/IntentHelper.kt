@@ -6,8 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.graphics.BitmapHelper
-import timber.log.Timber
 import java.io.File
 
 
@@ -65,11 +65,11 @@ object IntentHelper {
         val pm = context.packageManager
         val i = pm.getLaunchIntentForPackage(packageName)
         if (i == null) {
-            Timber.e("Package not found : $packageName")
+            LOGGER.error("Package not found : $packageName")
         } else {
             val listActivities = pm.queryIntentActivities(i, 0)
 
-            Timber.d("the res size is: %s", listActivities.size)
+            LOGGER.debug("the res size is: {}", listActivities.size)
 
             if (listActivities.size > 0) {
                 val info = listActivities[0]
@@ -81,7 +81,7 @@ object IntentHelper {
                 ret.putExtra(SETTINGS_QUICK_LAUNCH_PACKAGENAME, ai.packageName)
                 ret.putExtra(SETTINGS_QUICK_LAUNCH_SHORTCUT, "")
             } else {
-                Timber.e("Package not found : $packageName")
+                LOGGER.error("Package not found : $packageName")
             }
         }
         return ret
@@ -102,11 +102,11 @@ object IntentHelper {
         val pm = context.packageManager
         val i = pm.getLaunchIntentForPackage(packageName)
         if (i == null) {
-            Timber.e("Package not found : $packageName")
+            LOGGER.error("Package not found : $packageName")
         } else {
             val listActivities = pm.queryIntentActivities(i, 0)
 
-            Timber.d("the res size is: %s", listActivities.size)
+            LOGGER.debug("the res size is: {}", listActivities.size)
 
             if (listActivities.size > 0) {
                 val info = listActivities[0]
@@ -118,7 +118,7 @@ object IntentHelper {
                 ret.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapHelper.toBitmap(ai.loadIcon(pm)))
                 ret.putExtra("duplicate", false)
             } else {
-                Timber.e("Package not found : $packageName")
+                LOGGER.error("Package not found : $packageName")
             }
         }
         return ret
@@ -207,7 +207,6 @@ object IntentHelper {
      * `<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />`
      *
      * @param file      The file.
-     * @param isNewTask True to add flag of new task, false otherwise.
      * @return the intent of install app
      */
     fun getInstallAppIntent(context: Context, file: File, authority: String = context.packageName): Intent {
@@ -223,7 +222,6 @@ object IntentHelper {
      * Return the intent of launch app.
      *
      * @param packageName The name of the package.
-     * @param isNewTask   True to add flag of new task, false otherwise.
      * @return the intent of launch app
      */
     fun getLaunchAppIntent(context: Context, packageName: String): Intent? {
@@ -234,7 +232,6 @@ object IntentHelper {
      * Return the intent of launch app details settings.
      *
      * @param packageName The name of the package.
-     * @param isNewTask   True to add flag of new task, false otherwise.
      * @return the intent of launch app details settings
      */
     fun getLaunchAppDetailsSettingsIntent(packageName: String): Intent {
@@ -247,7 +244,6 @@ object IntentHelper {
      * Return the intent of share text.
      *
      * @param content   The content.
-     * @param isNewTask True to add flag of new task, false otherwise.
      * @return the intent of share text
      */
 

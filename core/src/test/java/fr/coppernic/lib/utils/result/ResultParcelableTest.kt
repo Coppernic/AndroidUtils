@@ -10,7 +10,6 @@ class ResultParcelableTest : RobolectricTest() {
 
     @Test
     fun parcelable() {
-        val t = Throwable("message")
         val resultOut = RESULT.ERROR
         val cpcResultOut = ResultParcelable(resultOut)
 

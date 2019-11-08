@@ -1,6 +1,6 @@
 package fr.coppernic.lib.utils.time
 
-import junit.framework.Assert.assertEquals
+import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
 class DurationTest {

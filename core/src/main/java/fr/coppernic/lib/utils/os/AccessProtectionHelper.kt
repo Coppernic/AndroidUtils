@@ -2,7 +2,7 @@ package fr.coppernic.lib.utils.os
 
 import android.content.Context
 import android.os.Binder
-import timber.log.Timber
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import java.util.*
 
 class AccessProtectionHelper constructor(val context: Context) {
@@ -49,7 +49,7 @@ class AccessProtectionHelper constructor(val context: Context) {
      */
     fun isPackageAllowed(packageName: String): Boolean {
         val remoteSignature = AppHelper.getAppSignaturesSHA256(context, packageName)
-        Timber.v("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
+        LOGGER.trace("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
 
         for (whitelistEntry in whitelist) {
             if (packageName.equals(whitelistEntry.key, true) && remoteSignature.equals(whitelistEntry.value, true)) {

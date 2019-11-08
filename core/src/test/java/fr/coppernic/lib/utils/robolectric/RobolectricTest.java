@@ -3,12 +3,9 @@ package fr.coppernic.lib.utils.robolectric;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import fr.coppernic.lib.utils.BuildConfig;
 
 import static org.awaitility.Awaitility.await;
 
@@ -19,7 +16,6 @@ import static org.awaitility.Awaitility.await;
  * Robolectric tests are done in a single thread !
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 23)
 public abstract class RobolectricTest {
 
     private final AtomicBoolean unblock = new AtomicBoolean(false);

@@ -26,13 +26,13 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.List;
 
+import fr.coppernic.lib.utils.debug.LogHelperKt;
 import fr.coppernic.lib.utils.result.RESULT;
 import fr.coppernic.lib.utils.result.Result;
-import timber.log.Timber;
 
 import static fr.coppernic.lib.utils.BuildConfig.DEBUG;
+import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
 
 /**
  * Class used for file manipulation
@@ -127,13 +127,10 @@ public final class FileHelper {
      * The output will be the same irrespective of the machine that the code is running on.
      *
      * @param filename the filename to retrieve the extension of.
-     * @return the extension of the file or an empty string if none exists or {@code null}
-     * if the filename is {@code null}.
+     * @return the extension of the file or an empty string if none exists
      */
-    public static String getExtension(final String filename) {
-        if (filename == null) {
-            return null;
-        }
+    @NonNull
+    public static String getExtension(@NonNull final String filename) {
         final int index = indexOfExtension(filename);
         if (index == NOT_FOUND) {
             return "";
@@ -142,10 +139,8 @@ public final class FileHelper {
         }
     }
 
-    public static String getFileName(final String path) {
-        if (path == null) {
-            return null;
-        }
+    @NonNull
+    public static String getFileName(@NonNull final String path) {
         final int index = indexOfLastSeparator(path);
         if (index == NOT_FOUND) {
             return "";
@@ -260,46 +255,6 @@ public final class FileHelper {
     }
 
     /**
-     * Get a writable cache dir.
-     * <p>If no writable cache dir is found, then return null</p>
-     *
-     * @param context Context
-     * @return A writable dir or null if not found or writable
-     */
-    @Deprecated // This logic should not be in lib
-    public static File getWritableCacheDir(Context context) {
-        File fl = context.getExternalCacheDir();
-        if (fl != null && fl.canWrite()) {
-            return fl;
-        }
-
-        fl = context.getCacheDir();
-        if (fl != null && fl.canWrite()) {
-            return fl;
-        }
-
-        Timber.e("No writable cache dir found");
-        return null;
-    }
-
-    /**
-     * Get a writable Files dir
-     *
-     * @param context Context
-     * @return A writable files dir or null if not found or writable
-     */
-    @Deprecated // This logic should not be in lib
-    public static File getWritableFilesDir(Context context) {
-        File dir = context.getFilesDir();
-        //noinspection ResultOfMethodCallIgnored
-        dir.mkdirs();
-        if (dir.canWrite()) {
-            return dir;
-        }
-        return null;
-    }
-
-    /**
      * Calculate the sha1 signature of a file
      *
      * @param path File's path
@@ -388,7 +343,7 @@ public final class FileHelper {
         if (sourceScheme.equals("file") && destScheme.equals("file")) {
             return copyFile(new File(sourcePath), new File(destPath));
         } else {
-            Timber.w("Cannot use other schemes than 'file' in copyFile()");
+            LOGGER.warn("Cannot use other schemes than 'file' in copyFile()");
             return RESULT.FILE_NOT_FOUND.toResult();
         }
     }
@@ -433,7 +388,7 @@ public final class FileHelper {
     public static Result copyFile(File src, File dest) {
         Result res = RESULT.OK.toResult();
 
-        Timber.d(
+        LOGGER.debug(
             "Copy from " + src.getAbsolutePath() + " into "
             + dest.getAbsolutePath());
 
@@ -492,37 +447,6 @@ public final class FileHelper {
     }
 
     /**
-     * Delete the file designed by uri
-     *
-     * @param uri Representing a file
-     * @return true if file has been deleted, false otherwise
-     */
-    @Deprecated // Should be in application instead of lib
-    public static boolean deleteFileFromUri(Uri uri) {
-        boolean ok = false;
-        if (uri != null) {
-            if (DEBUG) {
-                Timber.v("Delete %s", uri.toString());
-            }
-            String path = uri.getPath();
-            if (path != null) {
-                File f = new File(path);
-                ok = f.delete();
-            }
-        }
-        return ok;
-    }
-
-    @Deprecated // Should be in application instead of lib
-    public static boolean deleteFileFromUri(List<Uri> lUri) {
-        for (Uri uri : lUri) {
-            deleteFileFromUri(uri);
-        }
-
-        return true;
-    }
-
-    /**
      * Delete f if it exists
      *
      * @param f File to be deleted
@@ -530,7 +454,7 @@ public final class FileHelper {
     public static void deleteFile(File f) {
         if (f != null && f.exists()) {
             if (!f.delete()) {
-                Timber.v("Error in deleting %s", f.getName());
+                LOGGER.trace("Error in deleting {}", f.getName());
             }
         }
     }
@@ -567,7 +491,7 @@ public final class FileHelper {
             is = context.getContentResolver().openInputStream(uri);
             ret = BytesHelper.getBytesFromInputStream(is);
         } catch (FileNotFoundException e) {
-            Timber.v(e);
+            LogHelperKt.trace(LOGGER, e);
         } finally {
             Closeables.closeQuietly(is);
         }
@@ -612,7 +536,7 @@ public final class FileHelper {
             in = new FileInputStream(f);
             data = BytesHelper.getBytesFromInputStream(in);
         } catch (IOException e) {
-            Timber.v(e);
+            LogHelperKt.trace(LOGGER, e);
         } finally {
             Closeables.closeQuietly(in);
         }
@@ -651,10 +575,10 @@ public final class FileHelper {
     public static Result clearDirectory(File dir, boolean recursive, boolean deleteSelf) {
         Result res = RESULT.OK.toResult();
         if (dir == null) {
-            Timber.e("Dir is null");
+            LOGGER.error("Dir is null");
             res = RESULT.INVALID_PARAM.toResult();
         } else if (!dir.isDirectory()) {
-            Timber.e("Dir is not a directory");
+            LOGGER.error("Dir is not a directory");
             res = RESULT.INVALID_PARAM.toResult();
         } else {
             for (File f : dir.listFiles()) {
@@ -664,7 +588,7 @@ public final class FileHelper {
                 } else //noinspection StatementWithEmptyBody
                     if (!f.isDirectory()) {
                         if (DEBUG) {
-                            Timber.v("Delete %s", f.getPath());
+                            LOGGER.trace("Delete {}", f.getPath());
                         }
                         res = f.delete() ? res : RESULT.ERROR.toResult();
                     } else {
@@ -673,7 +597,7 @@ public final class FileHelper {
             }
             if (deleteSelf) {
                 if (DEBUG) {
-                    Timber.v("Delete %s", dir.getPath());
+                    LOGGER.trace("Delete {}", dir.getPath());
                 }
                 res = dir.delete() ? res : RESULT.ERROR.toResult();
             }
@@ -721,32 +645,6 @@ public final class FileHelper {
         }
 
         return stringBuilder.toString();
-    }
-
-    /**
-     * Store data bytes in file designed by Uri
-     * <p>
-     * A file with {@link Uri#getPath()} will be created
-     *
-     * @param uri  file's uri
-     * @param data data to write
-     * @return OK or ERROR :
-     * <ul>
-     * <li>FILE_NOT_FOUND</li>
-     * <li>IO</li>
-     * </ul>
-     */
-    @Deprecated //in favor of public static RESULT saveFile(Context context, Uri uri, byte[] data)
-    public static Result saveFile(Uri uri, byte[] data) {
-        InputStream is = new ByteArrayInputStream(data);
-        String path = uri.getPath();
-        Result res;
-        if (path != null) {
-            res = saveFile(new File(path), is);
-        } else {
-            res = RESULT.FILE_NOT_FOUND.toResult();
-        }
-        return res;
     }
 
     /**

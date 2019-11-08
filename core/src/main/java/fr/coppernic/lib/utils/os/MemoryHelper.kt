@@ -5,8 +5,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.StorageHelper
-import timber.log.Timber
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.FileReader
@@ -21,12 +21,16 @@ object MemoryHelper {
      *
      * @return Number of bytes available.
      */
+    @Suppress("DEPRECATION")
     fun getAvailableInternalMemorySize(): Long {
         val path = Environment.getDataDirectory()
         val stat = StatFs(path.path)
-        val blockSize = stat.blockSize.toLong()
-        val availableBlocks = stat.availableBlocks.toLong()
-        return availableBlocks * blockSize
+
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            stat.blockSize.toLong() * stat.availableBlocks.toLong()
+        } else {
+            stat.blockSizeLong * stat.availableBlocksLong
+        }
     }
 
     /**
@@ -36,12 +40,16 @@ object MemoryHelper {
      *
      * @return Total number of bytes.
      */
+    @Suppress("DEPRECATION")
     fun getTotalInternalMemorySize(): Long {
         val path = Environment.getDataDirectory()
         val stat = StatFs(path.path)
-        val blockSize = stat.blockSize.toLong()
-        val totalBlocks = stat.blockCount.toLong()
-        return totalBlocks * blockSize
+
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            stat.blockSize.toLong() * stat.blockCount.toLong()
+        } else {
+            stat.blockSizeLong * stat.blockCountLong
+        }
     }
 
     /**
@@ -52,6 +60,7 @@ object MemoryHelper {
      *
      * @return Device's memory information
      */
+    @Suppress("DEPRECATION")
     fun getMemInfo(): MemInfo {
         val ret = MemInfo()
         try {
@@ -76,7 +85,7 @@ object MemoryHelper {
         }
 
         val list = StorageHelper.determineStorageOptions()
-        Timber.d("Calculate size of %s", list[0])
+        LOGGER.debug("Calculate size of {}", list[0])
         val stat = StatFs(list[0])
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             ret.memTotal = stat.blockSize.toLong() * stat.blockCount.toLong() shr 10
@@ -85,7 +94,7 @@ object MemoryHelper {
             ret.memTotal = stat.blockSizeLong * stat.blockCountLong
             ret.memFree = stat.blockSizeLong * stat.availableBlocksLong
         }
-        Timber.d(ret.toString())
+        LOGGER.debug(ret.toString())
         ret.memUsed = ret.memTotal - ret.memFree
 
         return ret

@@ -1,7 +1,9 @@
 package fr.coppernic.lib.utils.debug;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.bipi.tressence.common.utils.Info;
-import timber.log.Timber;
 
 import static fr.coppernic.lib.utils.io.BytesHelper.byteArrayToString;
 
@@ -24,8 +26,8 @@ public final class L {
      * @param tag TAG to use in android log
      */
     public static void m(String tag) {
-        Timber.tag(tag);
-        Timber.v(Info.getMethodName(sDepth));
+        Logger l = LoggerFactory.getLogger(tag);
+        l.trace(Info.getMethodName(sDepth));
     }
 
     /**
@@ -36,8 +38,8 @@ public final class L {
      */
     public static void m(String tag, boolean debug) {
         if (debug) {
-            Timber.tag(tag);
-            Timber.v(Info.getMethodName(sDepth));
+            Logger l = LoggerFactory.getLogger(tag);
+            l.trace(Info.getMethodName(sDepth));
         }
     }
 
@@ -50,8 +52,8 @@ public final class L {
      */
     public static void m(String tag, boolean debug, String msg) {
         if (debug) {
-            Timber.tag(tag);
-            Timber.v(Info.getMethodName(sDepth) + ", " + msg);
+            Logger l = LoggerFactory.getLogger(tag);
+            l.trace("{}, {}", Info.getMethodName(sDepth), msg);
         }
     }
 
@@ -61,8 +63,8 @@ public final class L {
      * @param tag TAG to use in android log
      */
     public static void mt(String tag) {
-        Timber.tag(tag);
-        Timber.v(Info.getMethodName(sDepth) + ", " + Info.getThreadInfoString());
+        Logger l = LoggerFactory.getLogger(tag);
+        l.trace("{}, {}", Info.getMethodName(sDepth), Info.getThreadInfoString());
     }
 
     /**
@@ -73,8 +75,8 @@ public final class L {
      */
     public static void mt(String tag, boolean debug) {
         if (debug) {
-            Timber.tag(tag);
-            Timber.v(Info.getMethodName(sDepth) + ", " + Info.getThreadInfoString());
+            Logger l = LoggerFactory.getLogger(tag);
+            l.trace("{}, {}", Info.getMethodName(sDepth), Info.getThreadInfoString());
         }
     }
 
@@ -86,8 +88,8 @@ public final class L {
      */
     public static void mt(String tag, boolean debug, String msg) {
         if (debug) {
-            Timber.tag(tag);
-            Timber.v(Info.getMethodName(sDepth) + ", " + Info.getThreadInfoString() + ", " + msg);
+            Logger l = LoggerFactory.getLogger(tag);
+            l.trace("{}, {}, {}", Info.getMethodName(sDepth), Info.getThreadInfoString(), msg);
         }
     }
 
@@ -99,7 +101,7 @@ public final class L {
      * @param len   len of array
      */
     public static void printLine(String tag, byte[] array, int len) {
-        Timber.tag(tag);
-        Timber.v("l: %d, d: %s", len, byteArrayToString(array, len));
+        Logger l = LoggerFactory.getLogger(tag);
+        l.trace("l: {}, d: {}", len, byteArrayToString(array, len));
     }
 }

@@ -8,9 +8,9 @@ import android.database.SQLException
 import android.net.ConnectivityManager
 import android.net.Uri
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.BytesHelper
 import fr.coppernic.lib.utils.result.RESULT
-import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -76,7 +76,7 @@ object NetHelper {
 
             str = output.toString()
             if (DEBUG) {
-                Timber.v("Ret : $str")
+                LOGGER.trace("Ret : $str")
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -125,7 +125,7 @@ object NetHelper {
                 val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
                 for (intf in interfaces) {
                     if (DEBUG) {
-                        Timber.d(intf.toString())
+                        LOGGER.debug(intf.toString())
                     }
                     if (!intf.name.equals(interfaceName, ignoreCase = true)) {
                         continue
@@ -147,14 +147,12 @@ object NetHelper {
      */
     @Throws(SocketException::class)
     private fun getMacFromIntf(intf: NetworkInterface): String {
-        var ret = ""
         val mac = intf.hardwareAddress
-        if (mac == null) {
-            //let's return ""
+        return if (mac == null) {
+            ""
         } else {
-            ret = BytesHelper.byteArrayToString(mac, mac.size, ":")
+            BytesHelper.byteArrayToString(mac, mac.size, ":")
         }
-        return ret
     }
 
     /**
@@ -248,7 +246,7 @@ object NetHelper {
                     val index = c.getColumnIndex("_id")
                     id = c.getShort(index).toInt()
                     if (DEBUG) {
-                        Timber.d("Newly added APN : $id")
+                        LOGGER.debug("Newly added APN : $id")
                     }
                 }
             }
@@ -337,7 +335,7 @@ object NetHelper {
                 c.close()
             } else {
                 if (DEBUG) {
-                    Timber.v("c is null")
+                    LOGGER.trace("c is null")
                 }
             }
         } catch (e: SQLException) {

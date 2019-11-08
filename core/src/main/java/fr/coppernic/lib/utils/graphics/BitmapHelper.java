@@ -6,25 +6,24 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Locale;
 
+import fr.coppernic.lib.utils.core.Preconditions;
+import fr.coppernic.lib.utils.debug.InternalLog;
 import fr.coppernic.lib.utils.io.Closeables;
 import fr.coppernic.lib.utils.io.FileHelper;
-import timber.log.Timber;
 
 /**
  * Utility class to manipulate Bitmaps
  * Created by bastien on 01/12/15.
  */
+@SuppressWarnings("WeakerAccess")
 public final class BitmapHelper {
-
-    private static final String TAG = "CpcBitmap";
 
     private BitmapHelper() {
     }
@@ -55,7 +54,7 @@ public final class BitmapHelper {
             out.close();
             return out.toByteArray();
         } catch (IOException e) {
-            Timber.w("Unable to serialize bitmap: %s", e.toString());
+            InternalLog.LOGGER.warn("Unable to serialize bitmap: {}", e.toString());
             return null;
         }
     }
@@ -117,7 +116,7 @@ public final class BitmapHelper {
         final int size = bitmap.getWidth() * bitmap.getHeight() * 4;
         ByteBuffer buf = ByteBuffer.allocate(size);
         bitmap.copyPixelsToBuffer(buf);
-        Timber.d("%s bytes was copied", size);
+        InternalLog.LOGGER.debug("{} bytes was copied", size);
         return buf.array();
     }
 
@@ -135,35 +134,31 @@ public final class BitmapHelper {
      * @param bitmap : Bitmap to write
      * @return true if successful, false otherwise
      */
-    @SuppressWarnings("TryWithIdenticalCatches")
-    public static boolean saveBitmap(Uri uri, Bitmap bitmap) {
+    public static boolean saveBitmap(@NonNull Uri uri, @NonNull Bitmap bitmap) {
         boolean ret = false;
         FileOutputStream out = null;
         try {
-            //noinspection ConstantConditions
             out = new FileOutputStream(uri.getPath());
-            String ext = FileHelper.getExtension(uri.getPath()).toLowerCase(Locale.US);
+
+            String path = Preconditions.ensureNotNull(uri.getPath(), "");
+            String ext = FileHelper.getExtension(path);
             if (ext.contains("png")) {
-                Timber.d("Save png bitmap");
+                InternalLog.LOGGER.debug("Save png bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             } else if (ext.contains("jpg")) {
-                Timber.d("Save jpg bitmap");
+                InternalLog.LOGGER.debug("Save jpg bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             } else if (ext.contains("raw")) {
-                Timber.d("Save raw bitmap");
+                InternalLog.LOGGER.debug("Save raw bitmap");
                 out.write(getBytesFromBitmap(bitmap));
             } else if (ext.contains("bmp")) {
-                Timber.d("Save bmp bitmap");
+                InternalLog.LOGGER.debug("Save bmp bitmap");
                 ret = BmpHelper.save(bitmap, out);
             } else {
-                Timber.e("File ext not recognized : " + ext);
+                InternalLog.LOGGER.error("File ext not recognized : {}", ext);
                 ret = false;
             }
             out.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

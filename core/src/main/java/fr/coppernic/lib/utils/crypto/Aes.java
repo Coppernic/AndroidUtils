@@ -1,16 +1,15 @@
 package fr.coppernic.lib.utils.crypto;
 
-import android.util.Log;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import fr.coppernic.lib.utils.io.BytesHelper;
 
-public final class Aes {
-    public static final String TAG = "AES Coppernic";
+import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
 
+@SuppressWarnings("WeakerAccess")
+public final class Aes {
     static final byte[] IV =
         new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     static final byte[] RB =
@@ -167,9 +166,9 @@ public final class Aes {
         }
 
         // Step 4.
-        Log.d(TAG, "L = " + BytesHelper.byteArrayToString(l, l.length));
-        Log.d(TAG, "K1 = " + BytesHelper.byteArrayToString(k[0], k[0].length));
-        Log.d(TAG, "K2 = " + BytesHelper.byteArrayToString(k[1], k[1].length));
+        LOGGER.debug("L = " + BytesHelper.byteArrayToString(l, l.length));
+        LOGGER.debug("K1 = " + BytesHelper.byteArrayToString(k[0], k[0].length));
+        LOGGER.debug("K2 = " + BytesHelper.byteArrayToString(k[1], k[1].length));
 
         return k;
     }

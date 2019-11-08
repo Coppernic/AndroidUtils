@@ -9,14 +9,13 @@ import java.io.IOException;
 import fr.coppernic.lib.utils.io.FileHelper;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileHelperTest {
 
     @Test
     public void testGetExtension() {
-        assertEquals(null, FileHelper.getExtension(null));
         assertEquals("", FileHelper.getExtension(""));
         assertEquals("txt", FileHelper.getExtension(".txt"));
         assertEquals("txt", FileHelper.getExtension("hello.txt"));
@@ -38,7 +37,7 @@ public class FileHelperTest {
                 f = new File("/mnt/sdcard/temp.txt");
                 f.createNewFile();
             } catch (IOException e1) {
-                assertTrue(false);
+                fail();
             }
         }
 
@@ -49,7 +48,7 @@ public class FileHelperTest {
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         assertEquals("3cc28207d378cf553943d54087c97ed0441b81cb",

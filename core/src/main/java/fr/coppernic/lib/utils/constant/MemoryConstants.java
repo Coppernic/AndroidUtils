@@ -13,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  *     desc  : constants of memory
  * </pre>
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class MemoryConstants {
 
     public static final int BYTE = 1;

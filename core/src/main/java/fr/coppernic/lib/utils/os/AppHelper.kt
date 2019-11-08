@@ -13,9 +13,9 @@ import android.os.PowerManager
 import android.support.annotation.RequiresApi
 import fr.coppernic.lib.utils.BuildConfig
 import fr.coppernic.lib.utils.core.HashHelpers
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.BytesHelper
 import fr.coppernic.lib.utils.result.RESULT
-import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -75,7 +75,7 @@ object AppHelper {
             val info = pm.getPackageInfo(packageName, 0)
             info != null
         } catch (e: PackageManager.NameNotFoundException) {
-            Timber.v(e.toString())
+            LOGGER.trace(e.toString())
             false
         }
     }
@@ -248,10 +248,10 @@ object AppHelper {
         val processes = am.runningAppProcesses
         for (info in processes) {
             if (DEBUG) {
-                Timber.v("$pack vs ${info.processName}")
+                LOGGER.trace("$pack vs ${info.processName}")
             }
             if (info.processName == pack) {
-                Timber.i("Killing %s", info.processName)
+                LOGGER.info("Killing {}", info.processName)
                 am.killBackgroundProcesses(info.processName)
                 return RESULT.OK
             }
@@ -270,7 +270,7 @@ object AppHelper {
         val pm = context.packageManager
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        val resolveInfos = pm.queryIntentActivities(intent, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT)
+        val resolveInfos = pm.queryIntentActivities(intent, 0)
         for (info in resolveInfos) {
             if (info != null && info.loadLabel(pm) == appName) {
                 return info.activityInfo

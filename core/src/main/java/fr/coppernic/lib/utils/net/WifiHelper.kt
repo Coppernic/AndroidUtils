@@ -5,8 +5,8 @@ import android.content.Context
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.result.RESULT
-import timber.log.Timber
 
 @SuppressLint("MissingPermission")
 object WifiHelper {
@@ -19,7 +19,7 @@ object WifiHelper {
             // A NPE can occur here
             for (conf in listConf) {
                 if (DEBUG) {
-                    Timber.v("Remove network %s", conf.SSID)
+                    LOGGER.trace("Remove network {}", conf.SSID)
                 }
                 res = if (!manager.removeNetwork(conf.networkId)) {
                     RESULT.ERROR
@@ -28,7 +28,7 @@ object WifiHelper {
                 }
             }
         } catch (e: Exception) {
-            Timber.e("Exception in deleteAllConfigs : $e")
+            LOGGER.error("Exception in deleteAllConfigs : $e")
             e.printStackTrace()
             res = RESULT.ERROR
         }
@@ -48,7 +48,7 @@ object WifiHelper {
         var res = RESULT.OK
 
         if (isNetworkInList(context, ssid)) {
-            Timber.w("SSID already present : $ssid")
+            LOGGER.warn("SSID already present : $ssid")
             res = RESULT.ALREADY_SET
         } else {
             val wc = WifiConfiguration()
@@ -60,10 +60,10 @@ object WifiHelper {
 
             val id = manager.addNetwork(wc)
             if (id == -1) {
-                Timber.e("Add network failed : %s", wc.toString())
+                LOGGER.error("Add network failed : {}", wc.toString())
                 res = RESULT.ERROR
             } else if (!manager.saveConfiguration()) {
-                Timber.e("Save config failed")
+                LOGGER.error("Save config failed")
                 res = RESULT.ERROR
             }
         }
@@ -113,13 +113,13 @@ object WifiHelper {
 
         if (id != -1) {
             if (enable && !manager.enableNetwork(id, true)) {
-                Timber.e("Enable network $id Failed : $ssid")
+                LOGGER.error("Enable network $id Failed : $ssid")
                 res = RESULT.ERROR
             } else if (!enable && !manager.disableNetwork(id)) {
-                Timber.e("Disable network $id Failed : $ssid")
+                LOGGER.error("Disable network $id Failed : $ssid")
                 res = RESULT.ERROR
             } else if (!manager.saveConfiguration()) {
-                Timber.e("Save config failed")
+                LOGGER.error("Save config failed")
                 res = RESULT.ERROR
             }
         } else {

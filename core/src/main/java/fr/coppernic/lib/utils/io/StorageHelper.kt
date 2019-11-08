@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Environment
 import android.support.v4.content.ContextCompat
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
-import timber.log.Timber
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import java.io.File
 import java.util.*
 
@@ -78,6 +78,7 @@ object StorageHelper {
         var ret: File? = null
         val list = determineStorageOptions()
 
+        @Suppress("ControlFlowWithEmptyBody")
         if (list.size == 0) {
             //nothing to do
         } else if (list.size == 1) {
@@ -197,7 +198,7 @@ object StorageHelper {
             }
             scanner.close()
         } catch (e: Exception) {
-            Timber.w(e.toString())
+            LOGGER.warn(e.toString())
         }
 
     }
@@ -239,9 +240,9 @@ object StorageHelper {
             val root = File(mount)
             if (!root.exists() || !root.isDirectory || !root.canWrite()) {
                 if (DEBUG) {
-                    Timber.d("$mount exists ${root.exists()}")
-                    Timber.d("$mount isDirectory ${root.isDirectory}")
-                    Timber.d("$mount canWrite ${root.canWrite()}")
+                    LOGGER.debug("$mount exists ${root.exists()}")
+                    LOGGER.debug("$mount isDirectory ${root.isDirectory}")
+                    LOGGER.debug("$mount canWrite ${root.canWrite()}")
                 }
                 mMounts.removeAt(i--)
             }

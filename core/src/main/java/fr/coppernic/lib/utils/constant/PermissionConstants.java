@@ -19,6 +19,7 @@ import java.util.Arrays;
  *     desc  : constants of permission
  * </pre>
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 @SuppressLint("InlinedApi")
 public final class PermissionConstants {
 

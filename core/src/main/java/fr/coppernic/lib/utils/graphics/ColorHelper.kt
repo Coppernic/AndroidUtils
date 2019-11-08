@@ -6,7 +6,7 @@ import android.support.annotation.AttrRes
 import android.support.annotation.ColorInt
 import android.support.v4.content.ContextCompat
 import android.util.TypedValue
-import timber.log.Timber
+import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 
 
 object ColorHelper {
@@ -26,7 +26,7 @@ object ColorHelper {
     @ColorInt
     fun getAttributeColor(context: Context?, @AttrRes attr: Int): Int {
         if (context == null) {
-            Timber.e("getAttributeColor() context is null")
+            LOGGER.error("getAttributeColor() context is null")
             return Color.WHITE
         }
 

@@ -13,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  *     desc  : constants of time
  * </pre>
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class TimeConstants {
 
     public static final int MSEC = 1;
