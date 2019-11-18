@@ -72,4 +72,19 @@ dependencies {
     androidTestImplementation 'org.awaitility:awaitility:4.0.1'
 }
 
+println "CI=" + System.getenv('CI')
+println "TRAVIS=" + System.getenv('TRAVIS')
+println "CONTINUOUS_INTEGRATION=" + System.getenv('CONTINUOUS_INTEGRATION')
+println "TRAVIS_BRANCH=" + System.getenv('TRAVIS_BRANCH')
+println "TRAVIS_BUILD_DIR=" + System.getenv('TRAVIS_BUILD_DIR')
+println "TRAVIS_BUILD_ID=" + System.getenv('TRAVIS_BUILD_ID')
+println "TRAVIS_COMMIT=" + System.getenv('TRAVIS_COMMIT')
+println "TRAVIS_COMMIT_MESSAGE=" + System.getenv('TRAVIS_COMMIT_MESSAGE')
+println "TRAVIS_COMMIT_RANGE=" + System.getenv('TRAVIS_COMMIT_RANGE')
+println "TRAVIS_JOB_ID=" + System.getenv('TRAVIS_JOB_ID')
+println "TRAVIS_JOB_NAME=" + System.getenv('TRAVIS_JOB_NAME')
+println "TRAVIS_TAG=" + System.getenv('TRAVIS_TAG')
+println "TRAVIS_REPO_SLUG=" + System.getenv('TRAVIS_REPO_SLUG')
+println "TRAVIS_BUILD_STAGE_NAME=" + System.getenv('TRAVIS_BUILD_STAGE_NAME')
+
 apply from: rootProject.file('gradle/gradle-publish.gradle')
