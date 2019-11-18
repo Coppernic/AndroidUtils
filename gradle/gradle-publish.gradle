@@ -15,7 +15,7 @@ dokka {
         dir = "src/main/java"
 
         // URL showing where the source code can be accessed through the web browser
-        url = "https://github.com/Coppernic/AndroidUtils/tree/master/core/src/main/java"
+        url = GITHUB_SOURCE_URL
 
         // Suffix which is used to append the line number to the URL. Use #L for GitHub
         suffix = "#L"
@@ -119,12 +119,12 @@ bintray {
     // publish only if code is not dirty
     publish = !project.versioning.info.dirty
     pkg {
-        repo = "maven"
+        repo = BINTRAY_REPO
         // We are using Root project because there are several artifacts but for the same project !
         name = rootProject.name
-        userOrg = 'coppernic'
+        userOrg = BINTRAY_ORG
         licenses = ["Apache-2.0"]
-        labels = ['Utils', 'Android']
+        labels = BINTRAY_LABELS.split(",")
         vcsUrl = POM_SCM_URL
         websiteUrl = POM_URL
         issueTrackerUrl = POM_ISSUES_URL
@@ -137,5 +137,11 @@ bintray {
             vcsTag = t
         }
     }
-    publications = ['art']
+}
+
+// Add publications to bintray
+afterEvaluate {
+    bintray.publications = project.publishing.publications.collect {
+        it.name
+    }
 }

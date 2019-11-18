@@ -21,7 +21,7 @@ licenses:
   - android-sdk-license-.+
   - google-gdk-license-.+
   - ".+"
-script: if [[ $TRAVIS_BRANCH =~ (^release) ]]; then ./gradlew clean version Display build bintrayUpload -Pbintray_user=$bintray_user -Pbintray_key=$bintray_key; else ./gradlew clean versionDisplay build; fi
+script: if [[ $TRAVIS_BRANCH =~ (^release) ]]; then ./gradlew clean versionDisplay build bintrayUpload -Pbintray_user=$bintray_user -Pbintray_key=$bintray_key; else ./gradlew clean versionDisplay build; fi
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
