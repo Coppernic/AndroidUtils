@@ -18,7 +18,6 @@ class WatchDog @Inject constructor() : Disposable {
     @Synchronized
     fun clear() {
         timeout?.cancel()
-        timer.purge()
     }
 
     fun set(listener: (WatchDog) -> Unit, time: Long, unit: TimeUnit): Boolean {
