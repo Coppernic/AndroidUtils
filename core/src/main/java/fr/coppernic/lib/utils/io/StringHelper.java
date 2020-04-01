@@ -2,7 +2,7 @@ package fr.coppernic.lib.utils.io;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.Nullable;
 

@@ -4,7 +4,7 @@ import android.net.IpConfiguration
 import android.net.ProxyInfo
 import android.net.StaticIpConfiguration
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import org.apache.commons.lang3.ClassUtils
 import org.apache.commons.lang3.reflect.MethodUtils
 import java.lang.reflect.Method

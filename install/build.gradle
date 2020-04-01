@@ -16,7 +16,7 @@ android {
         versionCode versioning.info.versionCode
         versionName versioning.info.display
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -36,7 +36,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "com.android.support:support-v4:$support"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation 'fr.coppernic.lib.android-utils:core:0.0.5'
 
@@ -50,7 +50,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.robolectric:robolectric:3.8'
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'org.awaitility:awaitility:3.0.0'
     androidTestImplementation('com.schibsted.spain:barista:2.4.0') {
         exclude group: 'com.android.support'

@@ -10,7 +10,7 @@ import android.content.pm.Signature
 import android.os.Build
 import android.os.Looper
 import android.os.PowerManager
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import fr.coppernic.lib.utils.BuildConfig
 import fr.coppernic.lib.utils.core.HashHelpers
 import fr.coppernic.lib.utils.debug.InternalLog.LOGGER

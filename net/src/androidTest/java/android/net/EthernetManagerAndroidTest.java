@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.annotation.UiThreadTest;
+import androidx.test.annotation.UiThreadTest;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
