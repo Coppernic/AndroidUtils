@@ -3,7 +3,7 @@ package fr.coppernic.lib.utils.io
 import android.content.Context
 import android.os.Build
 import android.os.Environment
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
 import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import java.io.File

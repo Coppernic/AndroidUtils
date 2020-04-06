@@ -1,7 +1,7 @@
 package fr.coppernic.lib.utils.os
 
 import android.content.Context
-import android.support.test.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.AfterClass
