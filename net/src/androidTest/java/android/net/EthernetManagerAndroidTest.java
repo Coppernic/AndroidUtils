@@ -3,8 +3,6 @@ package android.net;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.test.InstrumentationRegistry;
-import androidx.test.annotation.UiThreadTest;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +11,8 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 
+import androidx.test.annotation.UiThreadTest;
+import androidx.test.core.app.ApplicationProvider;
 import fr.coppernic.lib.utils.net.IpConfigurationDelegate;
 import fr.coppernic.lib.utils.net.TestUtils;
 
@@ -29,7 +29,7 @@ public class EthernetManagerAndroidTest {
     @UiThreadTest
     @Before
     public void before() {
-        context = InstrumentationRegistry.getTargetContext();
+        context = ApplicationProvider.getApplicationContext();
         testUtils = new TestUtils();
         ethernetManager = (EthernetManager) context.getSystemService("ethernet");
 
