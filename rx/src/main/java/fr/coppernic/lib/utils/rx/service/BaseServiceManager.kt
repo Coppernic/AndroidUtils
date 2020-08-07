@@ -25,7 +25,7 @@ abstract class BaseServiceManager<T> {
     var emitter: SingleEmitter<T>? = null
 
     @Synchronized
-    fun getConnector(c: Context): Single<T>? {
+    fun getConnector(c: Context): Single<T> {
         return Single.create { singleEmitter ->
             emitter = singleEmitter
             connectToService(c)
