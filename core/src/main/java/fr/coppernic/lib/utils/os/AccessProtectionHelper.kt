@@ -3,6 +3,7 @@ package fr.coppernic.lib.utils.os
 import android.content.Context
 import android.os.Binder
 import android.util.Pair
+import fr.coppernic.lib.utils.log.LogDefines
 import fr.coppernic.lib.utils.log.LogDefines.LOG
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -46,7 +47,9 @@ class AccessProtectionHelper constructor(val context: Context, val whiteList: Ha
      */
     fun isPackageAllowed(packageName: String): Boolean {
         val remoteSignature = AppHelper.getAppSignaturesSHA256(context, packageName)
-        LOG.trace("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
+        if (LogDefines.verbose) {
+            LOG.trace("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
+        }
 
         whiteList.forEach {
             if (packageName.matches(it.first.toRegex()) && remoteSignature.equals(it.second, true)) {
