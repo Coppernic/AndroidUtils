@@ -24,6 +24,10 @@ class AccessProtectionHelper constructor(val context: Context, val whiteList: Ha
      * @return true if process is allowed
      */
     fun isUidAllowed(uid: Int): Boolean {
+        return isPackageAllowed(getPackageForUid(uid))
+    }
+
+    fun getPackageForUid(uid: Int): String {
         val callingPackages = context.packageManager.getPackagesForUid(uid)
                 ?: throw RuntimeException("Should not happen. No packages associated to caller UID!")
 
@@ -32,10 +36,8 @@ class AccessProtectionHelper constructor(val context: Context, val whiteList: Ha
         // callingPackages contains more than one entry when sharedUserId has been used
         // No plans to support sharedUserIds due to many bugs connected to them:
         // http://java-hamster.blogspot.de/2010/05/androids-shareduserid.html
-        val currentPkg = callingPackages[0]
-        return isPackageAllowed(currentPkg)
+        return callingPackages[0]
     }
-
 
     /**
      * Checks if process that correspond to this package is allowed regarding provided white list
@@ -47,7 +49,7 @@ class AccessProtectionHelper constructor(val context: Context, val whiteList: Ha
         LOG.trace("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
 
         whiteList.forEach {
-            if (packageName.equals(it.first, true) && remoteSignature.equals(it.second, true)) {
+            if (packageName.matches(it.first.toRegex()) && remoteSignature.equals(it.second, true)) {
                 return true
             }
         }
