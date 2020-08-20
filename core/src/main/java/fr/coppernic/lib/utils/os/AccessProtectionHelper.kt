@@ -2,16 +2,11 @@ package fr.coppernic.lib.utils.os
 
 import android.content.Context
 import android.os.Binder
+import android.util.Pair
 import fr.coppernic.lib.utils.log.LogDefines.LOG
-import java.util.*
 
-class AccessProtectionHelper constructor(val context: Context) {
-
-    val whitelist: HashMap<String, String> = HashMap()
-
-    constructor(context: Context, whiteList: Map<String, String>) : this(context) {
-        this.whitelist.putAll(whiteList)
-    }
+@Suppress("MemberVisibilityCanBePrivate")
+class AccessProtectionHelper constructor(val context: Context, val whiteList: HashSet<Pair<String, String>>) {
 
     /**
      * Checks if process that binds to this service (i.e. the package name corresponding to the
@@ -51,12 +46,11 @@ class AccessProtectionHelper constructor(val context: Context) {
         val remoteSignature = AppHelper.getAppSignaturesSHA256(context, packageName)
         LOG.trace("Checking if package $packageName with signature $remoteSignature is allowed to access privileged extension")
 
-        for (whitelistEntry in whitelist) {
-            if (packageName.equals(whitelistEntry.key, true) && remoteSignature.equals(whitelistEntry.value, true)) {
+        whiteList.forEach {
+            if (packageName.equals(it.first, true) && remoteSignature.equals(it.second, true)) {
                 return true
             }
         }
-
         return false
     }
 }

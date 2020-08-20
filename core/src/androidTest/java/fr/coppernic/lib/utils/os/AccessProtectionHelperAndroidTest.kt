@@ -1,7 +1,8 @@
 package fr.coppernic.lib.utils.os
 
 import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
+import android.util.Pair
+import androidx.test.core.app.ApplicationProvider
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.AfterClass
@@ -12,8 +13,8 @@ import timber.log.Timber
 
 class AccessProtectionHelperAndroidTest {
 
-    lateinit var accessProtectionHelper: AccessProtectionHelper
-    lateinit var context: Context
+    private lateinit var accessProtectionHelper: AccessProtectionHelper
+    private lateinit var context: Context
 
     companion object {
         @BeforeClass
@@ -31,19 +32,24 @@ class AccessProtectionHelperAndroidTest {
 
     @Before
     fun setUp() {
-        context = InstrumentationRegistry.getTargetContext()
-        accessProtectionHelper = AccessProtectionHelper(context)
+        context = ApplicationProvider.getApplicationContext()
     }
 
     @Test
     fun notAllowed() {
+        accessProtectionHelper = AccessProtectionHelper(context, HashSet())
         assertThat(accessProtectionHelper.isPackageAllowed(context.packageName), equalTo(false))
     }
 
     //748D82E5C019B361C7AD2C6F6AB8587602062EF4F5D444E3A2E44F2D8DCBFAC5
+    //E6D539D9E495619B32D32C7CFFB1FEAE1EFA86726CE6F23668E4FB6D1D80F122
     @Test
     fun allowed() {
-        accessProtectionHelper.whitelist["fr.coppernic.lib.utils.test"] = "748d82e5c019b361c7ad2c6f6ab8587602062ef4f5d444e3a2e44f2d8dcbfac5"
+
+        accessProtectionHelper = AccessProtectionHelper(context,
+                HashSet(listOf(
+                        Pair("fr.coppernic.lib.utils.test", "E6D539D9E495619B32D32C7CFFB1FEAE1EFA86726CE6F23668E4FB6D1D80F122".toLowerCase())
+                )))
         assertThat(accessProtectionHelper.isPackageAllowed(context.packageName), equalTo(true))
     }
 }
