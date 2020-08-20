@@ -8,8 +8,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
@@ -27,12 +25,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
-import fr.coppernic.lib.utils.debug.LogHelperKt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import fr.coppernic.lib.utils.log.LogAdditionsKt;
 import fr.coppernic.lib.utils.result.RESULT;
 import fr.coppernic.lib.utils.result.Result;
 
 import static fr.coppernic.lib.utils.BuildConfig.DEBUG;
-import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
+import static fr.coppernic.lib.utils.log.LogDefines.LOG;
 
 /**
  * Class used for file manipulation
@@ -343,7 +343,7 @@ public final class FileHelper {
         if (sourceScheme.equals("file") && destScheme.equals("file")) {
             return copyFile(new File(sourcePath), new File(destPath));
         } else {
-            LOGGER.warn("Cannot use other schemes than 'file' in copyFile()");
+            LOG.warn("Cannot use other schemes than 'file' in copyFile()");
             return RESULT.FILE_NOT_FOUND.toResult();
         }
     }
@@ -388,7 +388,7 @@ public final class FileHelper {
     public static Result copyFile(File src, File dest) {
         Result res = RESULT.OK.toResult();
 
-        LOGGER.debug(
+        LOG.debug(
             "Copy from " + src.getAbsolutePath() + " into "
             + dest.getAbsolutePath());
 
@@ -454,7 +454,7 @@ public final class FileHelper {
     public static void deleteFile(File f) {
         if (f != null && f.exists()) {
             if (!f.delete()) {
-                LOGGER.trace("Error in deleting {}", f.getName());
+                LOG.trace("Error in deleting {}", f.getName());
             }
         }
     }
@@ -491,7 +491,7 @@ public final class FileHelper {
             is = context.getContentResolver().openInputStream(uri);
             ret = BytesHelper.getBytesFromInputStream(is);
         } catch (FileNotFoundException e) {
-            LogHelperKt.trace(LOGGER, e);
+            LogAdditionsKt.trace(LOG, e);
         } finally {
             Closeables.closeQuietly(is);
         }
@@ -536,7 +536,7 @@ public final class FileHelper {
             in = new FileInputStream(f);
             data = BytesHelper.getBytesFromInputStream(in);
         } catch (IOException e) {
-            LogHelperKt.trace(LOGGER, e);
+            LogAdditionsKt.trace(LOG, e);
         } finally {
             Closeables.closeQuietly(in);
         }
@@ -575,10 +575,10 @@ public final class FileHelper {
     public static Result clearDirectory(File dir, boolean recursive, boolean deleteSelf) {
         Result res = RESULT.OK.toResult();
         if (dir == null) {
-            LOGGER.error("Dir is null");
+            LOG.error("Dir is null");
             res = RESULT.INVALID_PARAM.toResult();
         } else if (!dir.isDirectory()) {
-            LOGGER.error("Dir is not a directory");
+            LOG.error("Dir is not a directory");
             res = RESULT.INVALID_PARAM.toResult();
         } else {
             for (File f : dir.listFiles()) {
@@ -588,7 +588,7 @@ public final class FileHelper {
                 } else //noinspection StatementWithEmptyBody
                     if (!f.isDirectory()) {
                         if (DEBUG) {
-                            LOGGER.trace("Delete {}", f.getPath());
+                            LOG.trace("Delete {}", f.getPath());
                         }
                         res = f.delete() ? res : RESULT.ERROR.toResult();
                     } else {
@@ -597,7 +597,7 @@ public final class FileHelper {
             }
             if (deleteSelf) {
                 if (DEBUG) {
-                    LOGGER.trace("Delete {}", dir.getPath());
+                    LOG.trace("Delete {}", dir.getPath());
                 }
                 res = dir.delete() ? res : RESULT.ERROR.toResult();
             }

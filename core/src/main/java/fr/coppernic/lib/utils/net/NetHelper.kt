@@ -8,8 +8,8 @@ import android.database.SQLException
 import android.net.ConnectivityManager
 import android.net.Uri
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.BytesHelper
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 import fr.coppernic.lib.utils.result.RESULT
 import java.io.BufferedReader
 import java.io.IOException
@@ -76,7 +76,7 @@ object NetHelper {
 
             str = output.toString()
             if (DEBUG) {
-                LOGGER.trace("Ret : $str")
+                LOG.trace("Ret : $str")
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -125,7 +125,7 @@ object NetHelper {
                 val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
                 for (intf in interfaces) {
                     if (DEBUG) {
-                        LOGGER.debug(intf.toString())
+                        LOG.debug(intf.toString())
                     }
                     if (!intf.name.equals(interfaceName, ignoreCase = true)) {
                         continue
@@ -246,7 +246,7 @@ object NetHelper {
                     val index = c.getColumnIndex("_id")
                     id = c.getShort(index).toInt()
                     if (DEBUG) {
-                        LOGGER.debug("Newly added APN : $id")
+                        LOG.debug("Newly added APN : $id")
                     }
                 }
             }
@@ -335,7 +335,7 @@ object NetHelper {
                 c.close()
             } else {
                 if (DEBUG) {
-                    LOGGER.trace("c is null")
+                    LOG.trace("c is null")
                 }
             }
         } catch (e: SQLException) {

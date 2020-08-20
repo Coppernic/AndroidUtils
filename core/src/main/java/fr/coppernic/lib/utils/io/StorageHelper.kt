@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import fr.coppernic.lib.utils.BuildConfig.DEBUG
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 import java.io.File
 import java.util.*
 
@@ -198,7 +198,7 @@ object StorageHelper {
             }
             scanner.close()
         } catch (e: Exception) {
-            LOGGER.warn(e.toString())
+            LOG.warn(e.toString())
         }
 
     }
@@ -240,9 +240,9 @@ object StorageHelper {
             val root = File(mount)
             if (!root.exists() || !root.isDirectory || !root.canWrite()) {
                 if (DEBUG) {
-                    LOGGER.debug("$mount exists ${root.exists()}")
-                    LOGGER.debug("$mount isDirectory ${root.isDirectory}")
-                    LOGGER.debug("$mount canWrite ${root.canWrite()}")
+                    LOG.debug("$mount exists ${root.exists()}")
+                    LOG.debug("$mount isDirectory ${root.isDirectory}")
+                    LOG.debug("$mount canWrite ${root.canWrite()}")
                 }
                 mMounts.removeAt(i--)
             }

@@ -6,17 +6,18 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import androidx.annotation.NonNull;
 import fr.coppernic.lib.utils.core.Preconditions;
-import fr.coppernic.lib.utils.debug.InternalLog;
 import fr.coppernic.lib.utils.io.Closeables;
 import fr.coppernic.lib.utils.io.FileHelper;
+
+import static fr.coppernic.lib.utils.log.LogDefines.LOG;
 
 /**
  * Utility class to manipulate Bitmaps
@@ -54,7 +55,7 @@ public final class BitmapHelper {
             out.close();
             return out.toByteArray();
         } catch (IOException e) {
-            InternalLog.LOGGER.warn("Unable to serialize bitmap: {}", e.toString());
+            LOG.warn("Unable to serialize bitmap: {}", e.toString());
             return null;
         }
     }
@@ -116,7 +117,7 @@ public final class BitmapHelper {
         final int size = bitmap.getWidth() * bitmap.getHeight() * 4;
         ByteBuffer buf = ByteBuffer.allocate(size);
         bitmap.copyPixelsToBuffer(buf);
-        InternalLog.LOGGER.debug("{} bytes was copied", size);
+        LOG.debug("{} bytes was copied", size);
         return buf.array();
     }
 
@@ -143,19 +144,19 @@ public final class BitmapHelper {
             String path = Preconditions.ensureNotNull(uri.getPath(), "");
             String ext = FileHelper.getExtension(path);
             if (ext.contains("png")) {
-                InternalLog.LOGGER.debug("Save png bitmap");
+                LOG.debug("Save png bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             } else if (ext.contains("jpg")) {
-                InternalLog.LOGGER.debug("Save jpg bitmap");
+                LOG.debug("Save jpg bitmap");
                 ret = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             } else if (ext.contains("raw")) {
-                InternalLog.LOGGER.debug("Save raw bitmap");
+                LOG.debug("Save raw bitmap");
                 out.write(getBytesFromBitmap(bitmap));
             } else if (ext.contains("bmp")) {
-                InternalLog.LOGGER.debug("Save bmp bitmap");
+                LOG.debug("Save bmp bitmap");
                 ret = BmpHelper.save(bitmap, out);
             } else {
-                InternalLog.LOGGER.error("File ext not recognized : {}", ext);
+                LOG.error("File ext not recognized : {}", ext);
                 ret = false;
             }
             out.flush();

@@ -2,11 +2,11 @@ package fr.coppernic.lib.utils.graphics
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import android.util.TypedValue
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 
 
 object ColorHelper {
@@ -26,7 +26,7 @@ object ColorHelper {
     @ColorInt
     fun getAttributeColor(context: Context?, @AttrRes attr: Int): Int {
         if (context == null) {
-            LOGGER.error("getAttributeColor() context is null")
+            LOG.error("getAttributeColor() context is null")
             return Color.WHITE
         }
 

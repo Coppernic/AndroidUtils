@@ -2,7 +2,8 @@ package fr.coppernic.lib.utils.debug;
 
 import java.util.HashMap;
 
-import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
+import fr.coppernic.lib.utils.log.LogDefines;
+
 
 /**
  * Code profiling class
@@ -31,7 +32,7 @@ public final class SimpleProfiler {
      */
     public static synchronized void end(String s) {
         long end = System.currentTimeMillis();
-        LOGGER.debug("[Profiler] : Spent {} ms in {}", end - mBeginTime, s);
+        LogDefines.LOG.debug("[Profiler] : Spent {} ms in {}", end - mBeginTime, s);
     }
 
     /**
@@ -58,10 +59,10 @@ public final class SimpleProfiler {
             long end = System.currentTimeMillis();
             try {
                 //noinspection ConstantConditions
-                LOGGER.debug("[Profiler] : Spent {} ms in {}", end - M_MAP_TIME.get(tag), tag);
+                LogDefines.LOG.debug("[Profiler] : Spent {} ms in {}", end - M_MAP_TIME.get(tag), tag);
             } catch (Exception e) {
-                LOGGER.debug(e.toString());
-                LOGGER.debug("Is key " + tag + " exists ? " + M_MAP_TIME.containsKey(tag));
+                LogDefines.LOG.debug(e.toString());
+                LogDefines.LOG.debug("Is key " + tag + " exists ? " + M_MAP_TIME.containsKey(tag));
             }
         }
     }

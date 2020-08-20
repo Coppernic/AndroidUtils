@@ -13,8 +13,8 @@ import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import fr.coppernic.lib.utils.BuildConfig
 import fr.coppernic.lib.utils.core.HashHelpers
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.BytesHelper
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 import fr.coppernic.lib.utils.result.RESULT
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -75,7 +75,7 @@ object AppHelper {
             val info = pm.getPackageInfo(packageName, 0)
             info != null
         } catch (e: PackageManager.NameNotFoundException) {
-            LOGGER.trace(e.toString())
+            LOG.trace(e.toString())
             false
         }
     }
@@ -248,10 +248,10 @@ object AppHelper {
         val processes = am.runningAppProcesses
         for (info in processes) {
             if (DEBUG) {
-                LOGGER.trace("$pack vs ${info.processName}")
+                LOG.trace("$pack vs ${info.processName}")
             }
             if (info.processName == pack) {
-                LOGGER.info("Killing {}", info.processName)
+                LOG.info("Killing {}", info.processName)
                 am.killBackgroundProcesses(info.processName)
                 return RESULT.OK
             }

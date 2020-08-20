@@ -6,8 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.core.content.FileProvider
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.graphics.BitmapHelper
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 import java.io.File
 
 
@@ -65,11 +65,11 @@ object IntentHelper {
         val pm = context.packageManager
         val i = pm.getLaunchIntentForPackage(packageName)
         if (i == null) {
-            LOGGER.error("Package not found : $packageName")
+            LOG.error("Package not found : $packageName")
         } else {
             val listActivities = pm.queryIntentActivities(i, 0)
 
-            LOGGER.debug("the res size is: {}", listActivities.size)
+            LOG.debug("the res size is: {}", listActivities.size)
 
             if (listActivities.size > 0) {
                 val info = listActivities[0]
@@ -81,7 +81,7 @@ object IntentHelper {
                 ret.putExtra(SETTINGS_QUICK_LAUNCH_PACKAGENAME, ai.packageName)
                 ret.putExtra(SETTINGS_QUICK_LAUNCH_SHORTCUT, "")
             } else {
-                LOGGER.error("Package not found : $packageName")
+                LOG.error("Package not found : $packageName")
             }
         }
         return ret
@@ -102,11 +102,11 @@ object IntentHelper {
         val pm = context.packageManager
         val i = pm.getLaunchIntentForPackage(packageName)
         if (i == null) {
-            LOGGER.error("Package not found : $packageName")
+            LOG.error("Package not found : $packageName")
         } else {
             val listActivities = pm.queryIntentActivities(i, 0)
 
-            LOGGER.debug("the res size is: {}", listActivities.size)
+            LOG.debug("the res size is: {}", listActivities.size)
 
             if (listActivities.size > 0) {
                 val info = listActivities[0]
@@ -118,7 +118,7 @@ object IntentHelper {
                 ret.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapHelper.toBitmap(ai.loadIcon(pm)))
                 ret.putExtra("duplicate", false)
             } else {
-                LOGGER.error("Package not found : $packageName")
+                LOG.error("Package not found : $packageName")
             }
         }
         return ret

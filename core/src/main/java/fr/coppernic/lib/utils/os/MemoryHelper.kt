@@ -5,8 +5,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
-import fr.coppernic.lib.utils.debug.InternalLog.LOGGER
 import fr.coppernic.lib.utils.io.StorageHelper
+import fr.coppernic.lib.utils.log.LogDefines.LOG
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.FileReader
@@ -85,7 +85,7 @@ object MemoryHelper {
         }
 
         val list = StorageHelper.determineStorageOptions()
-        LOGGER.debug("Calculate size of {}", list[0])
+        LOG.debug("Calculate size of {}", list[0])
         val stat = StatFs(list[0])
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             ret.memTotal = stat.blockSize.toLong() * stat.blockCount.toLong() shr 10
@@ -94,7 +94,7 @@ object MemoryHelper {
             ret.memTotal = stat.blockSizeLong * stat.blockCountLong
             ret.memFree = stat.blockSizeLong * stat.availableBlocksLong
         }
-        LOGGER.debug(ret.toString())
+        LOG.debug(ret.toString())
         ret.memUsed = ret.memTotal - ret.memFree
 
         return ret

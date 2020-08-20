@@ -5,8 +5,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import fr.coppernic.lib.utils.io.BytesHelper;
-
-import static fr.coppernic.lib.utils.debug.InternalLog.LOGGER;
+import fr.coppernic.lib.utils.log.LogDefines;
 
 @SuppressWarnings("WeakerAccess")
 public final class Aes {
@@ -94,15 +93,15 @@ public final class Aes {
             e.printStackTrace();
         }
 
-        return null;
+        return new byte[]{};
     }
 
     /**
      * Returns MAC truncation used for SAM AV2 host authentication
      *
-     * @param key
-     * @param message
-     * @return
+     * @param key     Key
+     * @param message Message
+     * @return bytes
      */
     public static byte[] getMact(byte[] key, byte[] message) {
         byte[] cmac = getCmac(key, message);
@@ -166,9 +165,9 @@ public final class Aes {
         }
 
         // Step 4.
-        LOGGER.debug("L = " + BytesHelper.byteArrayToString(l, l.length));
-        LOGGER.debug("K1 = " + BytesHelper.byteArrayToString(k[0], k[0].length));
-        LOGGER.debug("K2 = " + BytesHelper.byteArrayToString(k[1], k[1].length));
+        LogDefines.LOG.debug("L = " + BytesHelper.byteArrayToString(l, l.length));
+        LogDefines.LOG.debug("K1 = " + BytesHelper.byteArrayToString(k[0], k[0].length));
+        LogDefines.LOG.debug("K2 = " + BytesHelper.byteArrayToString(k[1], k[1].length));
 
         return k;
     }
