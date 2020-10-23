@@ -36,10 +36,10 @@ class AccessProtectionHelper constructor(val context: Context, val whiteList: Ma
      * @return true if process is allowed
      */
     fun isUidAllowed(uid: Int): Boolean {
-        return arePackagesAllowed(getPackageForUid(uid))
+        return arePackagesAllowed(getPackagesForUid(uid))
     }
 
-    fun getPackageForUid(uid: Int): Set<String> {
+    fun getPackagesForUid(uid: Int): Set<String> {
         val callingPackages = context.packageManager.getPackagesForUid(uid)
                 ?: throw RuntimeException("Should not happen. No packages associated to caller UID!")
 
