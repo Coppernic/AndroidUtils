@@ -15,6 +15,10 @@ const val SETTINGS_QUICK_LAUNCH_TITLE = "com.android.settings.quicklaunch.TITLE"
 const val SETTINGS_QUICK_LAUNCH_PACKAGENAME = "com.android.settings.quicklaunch.PACKAGENAME"
 const val SETTINGS_QUICK_LAUNCH_SHORTCUT = "com.android.settings.quicklaunch.SHORTCUT"
 
+private const val ACTION_SHUTDOWN_N = "android.intent.action.ACTION_REQUEST_SHUTDOWN"
+private const val ACTION_SHUTDOWN_O = "com.android.internal.intent.action.REQUEST_SHUTDOWN"
+private const val ANDROID_KEY_CONFIRM = "android.intent.extra.KEY_CONFIRM"
+
 object IntentHelper {
 
     /**
@@ -159,10 +163,14 @@ object IntentHelper {
      * @return Intent to send
      */
     fun getShutdownIntent(): Intent {
-        val i = Intent("android.intent.action.ACTION_REQUEST_SHUTDOWN")
-        i.putExtra("android.intent.extra.KEY_CONFIRM", false)
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        return i
+        return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+            Intent(ACTION_SHUTDOWN_N)
+        } else {
+            Intent(ACTION_SHUTDOWN_O)
+        }.apply {
+            putExtra(ANDROID_KEY_CONFIRM, false)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
 
     /**
