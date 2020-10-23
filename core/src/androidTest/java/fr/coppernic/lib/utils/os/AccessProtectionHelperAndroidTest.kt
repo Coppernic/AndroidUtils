@@ -39,8 +39,11 @@ class AccessProtectionHelperAndroidTest {
 
     @Test
     fun notAllowed() {
-        accessProtectionHelper = AccessProtectionHelper(context, mapOf())
+        accessProtectionHelper = AccessProtectionHelper(context, mapOf(
+                "c8a2e9bccf597c2fb6dc66bee293fc13f2fc47ec77bc6b2b0d52c11f51192ab8" to setOf("NOPE".toRegex())
+        ))
         assertThat(accessProtectionHelper.arePackagesAllowed(setOf(context.packageName)), equalTo(false))
+        assertThat(accessProtectionHelper.arePackagesAllowed(setOf("com.android.camera")), equalTo(false))
     }
 
     //748D82E5C019B361C7AD2C6F6AB8587602062EF4F5D444E3A2E44F2D8DCBFAC5
