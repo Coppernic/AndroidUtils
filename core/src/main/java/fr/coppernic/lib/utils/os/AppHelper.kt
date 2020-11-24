@@ -21,7 +21,7 @@ import java.io.IOException
 
 const val UID_SYSTEM = 1000
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 object AppHelper {
     private val DEBUG = BuildConfig.DEBUG
 
@@ -199,6 +199,7 @@ object AppHelper {
      *
      * @param ctx Context
      */
+    @SuppressLint("MissingPermission")
     fun reboot(ctx: Context) {
         val pm = ctx.getSystemService(Context.POWER_SERVICE) as PowerManager?
         pm?.reboot(null)
