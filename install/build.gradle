@@ -1,6 +1,5 @@
 plugins {
     id "fr.coppernic.versioning" version "3.1.2"
-    id "com.jfrog.bintray" version "1.8.4"
 }
 
 apply plugin: 'com.android.library'
@@ -29,22 +28,22 @@ android {
 }
 
 dependencies {
-    compileOnly 'com.google.dagger:dagger:2.25.2'
+    compileOnly 'com.google.dagger:dagger:2.28.3'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation 'fr.coppernic.lib.android-utils:core:0.0.6'
+    implementation 'fr.coppernic.lib.android-utils:core:0.1.0'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'fr.bipi.treessence:treessence:0.3.0'
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     //noinspection GradleDependency
     testImplementation 'org.awaitility:awaitility:3.0.0'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     //noinspection GradleDependency
     androidTestImplementation 'org.awaitility:awaitility:3.0.0'
 }

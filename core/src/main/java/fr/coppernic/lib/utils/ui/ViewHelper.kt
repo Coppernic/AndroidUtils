@@ -7,7 +7,7 @@ fun View.getHumanReadableId(): String {
     val out = StringBuilder()
     if (id != View.NO_ID) {
         val r = context.resources
-        if (id > 0 && id.ushr(24) != 0 && r != null) {
+        if (id != 0 && id.ushr(24) != 0 && r != null) {
             try {
                 val pkgname: String
                 when (id and -0x1000000) {

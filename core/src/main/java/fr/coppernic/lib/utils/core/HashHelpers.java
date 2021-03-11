@@ -3,6 +3,8 @@ package fr.coppernic.lib.utils.core;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import androidx.annotation.NonNull;
+
 /**
  * Provide hashing functions using the Modified Bernstein hash
  */
@@ -85,9 +87,10 @@ public final class HashHelpers {
         return h;
     }
 
+    @NonNull
     public static byte[] hashTemplate(final byte[] data, final String algorithm) {
         if (data == null || data.length <= 0) {
-            return null;
+            return new byte[]{};
         }
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);

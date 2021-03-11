@@ -1,8 +1,5 @@
 package fr.coppernic.lib.utils.io;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +7,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Collection;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Class containing method performing some basic tasks with bytes
@@ -31,20 +32,15 @@ public final class BytesHelper {
     /**
      * Fill a bytes array with zeros
      *
-     * @param array
+     * @param array Array to clear
      */
     public static void clearMemoryWithZero(byte[] array) {
-
-        for (int i = 0; i < array.length; i++) {
-            array[i] = 0;
-        }
+        Arrays.fill(array, (byte) 0);
     }
 
     public static void clearMemoryWithZero(int[] array) {
 
-        for (int i = 0; i < array.length; i++) {
-            array[i] = 0;
-        }
+        Arrays.fill(array, 0);
     }
 
     /**
